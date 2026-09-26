@@ -101,9 +101,9 @@ DOM at load time (touch `document` inside functions, not at the top level).
 - **No real ball physics.** By design: the machine is animated and its ball is
   scripted (`src/machine/freeplay.js`), so attention stays on the logic.
 - **Free Play is a fixed script.** `SCRIPT` is a waypoint list, and events are
-  mapped to level inputs by `EVENT_INPUTS`. If a level's input ids change, that
-  map needs updating - nothing enforces it yet, and a test for it would be a
-  cheap win.
+  mapped to level inputs by `EVENT_INPUTS`. `tests/levels.test.js` checks that
+  every mapping names a real level input; if you rename an input id, that test
+  fails.
 - **Hint timing is not configurable in the UI.** Constants at the top of
   `src/ui/hints.js` (first hint at 120s of visible time, then 90s apart).
 - **No teacher dashboard.** Progress is per-device localStorage only. Hint tiers
