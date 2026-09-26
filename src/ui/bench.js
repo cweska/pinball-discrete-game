@@ -7,8 +7,8 @@
  * one pin then the other.
  */
 
-import { gateDef } from '../engine/gates.js';
-import { IN_PIN, OUT, slotPins } from '../engine/circuit.js';
+import { gateDef, OUT } from '../engine/gates.js';
+import { IN_PIN, slotPins } from '../engine/circuit.js';
 import { clear, setClass, svg, svgPoint } from '../util/dom.js';
 import {
   BENCH_VIEW,

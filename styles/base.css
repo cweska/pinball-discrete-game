@@ -38,6 +38,11 @@
   box-sizing: border-box;
 }
 
+/* Panels here set display, which would otherwise win against the hidden attribute. */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
