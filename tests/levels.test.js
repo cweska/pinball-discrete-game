@@ -9,7 +9,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { ACTS, LEVELS, boundParts } from '../src/levels/index.js';
+import { ACTS, LEVELS, boundParts, levelById } from '../src/levels/index.js';
+import { EVENT_INPUTS, STANDING } from '../src/machine/freeplay.js';
 import { applySolution, circuitFromLevel, parseEndpoint, slotPins } from '../src/engine/circuit.js';
 import { gateDef } from '../src/engine/gates.js';
 import { hasPart } from '../src/machine/parts.js';
@@ -162,4 +163,23 @@ test('difficulty climbs: gate count never drops by much and placement opens up',
   const counts = LEVELS.map((l) => l.reference.gates.length);
   assert.deepEqual(counts.slice(0, 3), [1, 1, 1], 'the tutorial act is one gate per level');
   assert.ok(counts.at(-1) >= Math.max(...counts), 'the finale is the biggest build');
+});
+
+test('Free Play events name real level inputs', () => {
+  for (const [event, targets] of Object.entries(EVENT_INPUTS)) {
+    assert.ok(targets.length, `${event} has no targets`);
+    for (const [levelId, inputId] of targets) {
+      const level = levelById(levelId);
+      assert.ok(level, `${event} names unknown level ${levelId}`);
+      assert.ok(
+        level.io.inputs.some((terminal) => terminal.id === inputId),
+        `${event} names unknown input ${inputId} on ${levelId}`
+      );
+    }
+  }
+  for (const [levelId, inputId] of STANDING) {
+    const level = levelById(levelId);
+    assert.ok(level, `standing switch names unknown level ${levelId}`);
+    assert.ok(level.io.inputs.some((terminal) => terminal.id === inputId), `standing switch ${inputId}`);
+  }
 });

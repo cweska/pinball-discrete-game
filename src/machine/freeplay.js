@@ -9,7 +9,7 @@
 
 import { circuitFromLevel } from '../engine/circuit.js';
 import { createState, settle } from '../engine/simulate.js';
-import { LEVELS, levelById } from '../levels/index.js';
+import { LEVELS } from '../levels/index.js';
 import { loadBench } from '../state/progress.js';
 
 /**
@@ -17,7 +17,7 @@ import { loadBench } from '../state/progress.js';
  * several levels: the ball hitting a flipper is both a flipper coil and a lane
  * change request.
  */
-const EVENT_INPUTS = {
+export const EVENT_INPUTS = {
   launch: [['ball-saver', 'launch']],
   drain: [['ball-saver', 'drain']],
   endOfBall: [['ball-saver', 'endOfBall']],
@@ -39,7 +39,7 @@ const EVENT_INPUTS = {
 };
 
 /** Switches that simply sit closed while a game is running. */
-const STANDING = [
+export const STANDING = [
   ['kickback', 'armed', 1],
 ];
 

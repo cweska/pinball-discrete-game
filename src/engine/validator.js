@@ -8,7 +8,7 @@
  * whole point there.
  */
 
-import { gateDef } from './gates.js';
+import { gateDef, OUT } from './gates.js';
 import { createState, settle } from './simulate.js';
 
 export function normalizeRows(spec, inputIds) {
@@ -48,6 +48,17 @@ function describeInputs(level, inputs) {
 
 /** Wiring problems worth reporting before we bother simulating. */
 export function checkWiring(level, circuit) {
+  for (const slot of circuit.slots || []) {
+    if (!circuit.slotIsFree(slot.id)) continue;
+    if (circuit.wiresFrom({ node: slot.id, pin: OUT }).length) {
+      return {
+        ok: false,
+        reason: 'incomplete',
+        message: 'The socket is empty. Drop a gate in first.',
+        highlight: { node: slot.id },
+      };
+    }
+  }
   for (const terminal of circuit.outputs) {
     if (!circuit.wireInto({ node: terminal.id, pin: 'in' })) {
       return { ok: false, reason: 'incomplete', message: `${terminal.label} has no wire running to it yet.` };

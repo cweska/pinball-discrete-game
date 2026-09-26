@@ -282,6 +282,15 @@ export function createMachine(root) {
       setClass(node, 'part--live', !!state.live);
       setClass(node, 'is-on', !!value && (state.live || state.target));
 
+      if (entry.def.kind === 'flipper') {
+        const bat = node.querySelector('.flipper__bat');
+        if (bat) {
+          const on = !!value && (state.live || state.target);
+          const angle = on ? 34 * (entry.def.flip || 1) : 0;
+          bat.setAttribute('transform', `rotate(${angle} ${entry.def.x} ${entry.def.y})`);
+        }
+      }
+
       if (entry.def.kind === 'toy') {
         const shouldSpin = !!value && (state.live || state.target);
         setClass(node, 'is-spinning', shouldSpin);

@@ -334,16 +334,7 @@
 }
 
 .flipper__bat {
-  transform-origin: var(--pivot-x) var(--pivot-y);
   transition: transform 55ms ease-out;
-}
-
-.part--flipper.is-on .flipper__bat {
-  transform: rotate(-34deg);
-}
-
-[data-part='flipper.right'].is-on .flipper__bat {
-  transform: rotate(34deg);
 }
 
 .part--flipper.is-on .flipper__bar {
@@ -432,7 +423,8 @@
 }
 
 .toy__wheel {
-  transform-origin: var(--pivot-x) var(--pivot-y);
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 .part--toy.is-spinning .toy__wheel {
@@ -738,6 +730,7 @@
 .terminal__box {
   fill: #161d2e;
   stroke: #3a476d;
+  cursor: pointer;
 }
 
 .terminal__label {
@@ -789,8 +782,13 @@
   r: 7;
 }
 
-.bench.is-wiring .pin--in .pin__dot {
+.bench.is-wiring .pin--in .pin__dot,
+.bench.is-wiring .terminal--output .terminal__box {
   stroke: var(--live);
+}
+
+.bench.is-wiring .terminal--output .terminal__box {
+  fill: color-mix(in srgb, var(--live) 12%, #1a1c2e);
 }
 
 /* gates */

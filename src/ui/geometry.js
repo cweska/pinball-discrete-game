@@ -135,5 +135,5 @@ export function keyboardSpots() {
   return spots;
 }
 
-export const PIN_HIT_RADIUS = 15;
+export const PIN_HIT_RADIUS = 22;
 export { IN_PIN, OUT };

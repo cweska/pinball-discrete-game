@@ -127,7 +127,7 @@ export function createBench(root, options = {}) {
     const role = direction === 'out' ? 'output' : `input ${pin.toUpperCase()}`;
     group.append(
       svg('circle', { class: 'pin__hit', cx: position.x, cy: position.y, r: PIN_HIT_RADIUS }),
-      svg('circle', { class: 'pin__dot', cx: position.x, cy: position.y, r: 5 })
+      svg('circle', { class: 'pin__dot', cx: position.x, cy: position.y, r: 6.5 })
     );
     const hit = group.querySelector('.pin__hit');
     hit.setAttribute('tabindex', '0');
@@ -406,9 +406,28 @@ export function createBench(root, options = {}) {
 
   function pinFromEvent(event) {
     const element = document.elementFromPoint(event.clientX, event.clientY);
-    const pin = element && element.closest ? element.closest('.pin') : null;
-    if (!pin || !view.contains(pin)) return null;
-    return { node: pin.dataset.node, pin: pin.dataset.pin };
+    if (element && view.contains(element)) {
+      const pin = element.closest?.('.pin');
+      if (pin && view.contains(pin)) return { node: pin.dataset.node, pin: pin.dataset.pin };
+      const terminal = element.closest?.('.terminal');
+      if (terminal && view.contains(terminal)) {
+        const isInput = terminal.classList.contains('terminal--input');
+        return { node: terminal.dataset.terminal, pin: isInput ? OUT : IN_PIN };
+      }
+    }
+    const point = svgPoint(view, event);
+    let best = null;
+    let bestDistance = PIN_HIT_RADIUS * 1.6;
+    for (const pinEl of view.querySelectorAll('.pin')) {
+      const dot = pinEl.querySelector('.pin__dot');
+      if (!dot) continue;
+      const distance = Math.hypot(point.x - Number(dot.getAttribute('cx')), point.y - Number(dot.getAttribute('cy')));
+      if (distance < bestDistance) {
+        best = { node: pinEl.dataset.node, pin: pinEl.dataset.pin };
+        bestDistance = distance;
+      }
+    }
+    return best;
   }
 
   function slotFromEvent(event) {
@@ -474,27 +493,26 @@ export function createBench(root, options = {}) {
   function onPointerDown(event) {
     if (event.button !== undefined && event.button !== 0) return;
     const target = event.target;
-    const pinGroup = target.closest?.('.pin');
     const removeBadge = target.closest?.('[data-remove]');
     const wireHit = target.closest?.('.wire__hit');
     const gateGroup = target.closest?.('.gate');
     const slotGroup = target.closest?.('.slot');
     const spotGroup = target.closest?.('.spot');
+    const hitPin = pinFromEvent(event);
 
     if (removeBadge) {
       removeGate(removeBadge.dataset.remove);
       return;
     }
-    if (pinGroup) {
+    if (hitPin) {
       event.preventDefault();
-      const pin = { node: pinGroup.dataset.node, pin: pinGroup.dataset.pin };
       if (pendingPin) {
-        const done = tryConnect(pendingPin, pin);
+        const done = tryConnect(pendingPin, hitPin);
         pendingPin = done ? null : pendingPin;
         refreshDecorations();
         return;
       }
-      drag = { kind: 'wire', from: pin };
+      drag = { kind: 'wire', from: hitPin };
       const path = svg('path', { class: 'pending-wire', d: '' });
       layers.overlay.append(path);
       onPointerMove(event);

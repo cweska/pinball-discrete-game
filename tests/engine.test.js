@@ -189,6 +189,24 @@ test('validator rejects incomplete wiring with a readable message', () => {
   assert.match(dangling.message, /input pin/);
 });
 
+test('an empty socket is reported as incomplete, not a wrong answer', () => {
+  const level = {
+    io: { inputs: [{ id: 'btn', label: 'BTN' }], outputs: [{ id: 'coil', label: 'COIL' }] },
+    palette: [{ type: 'INV', count: 1 }],
+    slots: [{ id: 's1', accepts: ['INV'] }],
+    prewired: [
+      ['btn', 's1.a'],
+      ['s1.out', 'coil'],
+    ],
+    spec: { kind: 'truthTable', rows: [[{ btn: 0 }, { coil: 1 }]] },
+  };
+  const circuit = circuitFromLevel(level);
+  const result = validate(level, circuit);
+  assert.equal(result.ok, false);
+  assert.equal(result.reason, 'incomplete');
+  assert.match(result.message, /socket is empty/i);
+});
+
 test('validator reports the failing row for a wrong gate', () => {
   const level = {
     io: { inputs: [{ id: 'x', label: 'X' }, { id: 'y', label: 'Y' }], outputs: [{ id: 'z', label: 'Z' }] },

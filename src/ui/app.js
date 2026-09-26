@@ -7,6 +7,7 @@ import { circuitFromLevel } from '../engine/circuit.js';
 import { createState, settle } from '../engine/simulate.js';
 import { validate } from '../engine/validator.js';
 import { LEVELS, boundParts, levelByNumber, partsLiveAfter } from '../levels/index.js';
+import { gateDef } from '../engine/gates.js';
 import * as audio from '../machine/audio.js';
 import { createFreePlay } from '../machine/freeplay.js';
 import { createMachine } from '../machine/playfield.js';
@@ -52,7 +53,16 @@ export function createApp(refs) {
   const palette = createPalette(refs.palette, {
     onArm: (type) => {
       audio.unlockAudio();
-      palette.setArmed(bench.arm(type));
+      const armed = bench.arm(type);
+      palette.setArmed(armed);
+      if (armed) {
+        hud.setStatus(
+          level.placement === 'slots'
+            ? `Click the socket to drop the ${gateDef(armed).label} in. Drag works too.`
+            : `Click on the bench to drop the ${gateDef(armed).label}, or drag it from the bin.`,
+          'info'
+        );
+      }
     },
     onDrag: (type, event) => {
       audio.unlockAudio();
