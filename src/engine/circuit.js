@@ -38,6 +38,11 @@ export function endpointKey(endpoint) {
 
 let wireSeq = 0;
 
+/** Wire ids have to stay unique across restores, so they come from one counter. */
+function nextWireId() {
+  return `w${++wireSeq}`;
+}
+
 export class Circuit {
   constructor({ inputs = [], outputs = [], slots = [] } = {}) {
     this.inputs = inputs.map((t) => ({ ...t }));
@@ -191,7 +196,7 @@ export class Circuit {
       this.wires = this.wires.filter((w) => w !== occupied);
     }
 
-    const wire = { id: `w${++wireSeq}`, from, to, fixed };
+    const wire = { id: nextWireId(), from, to, fixed };
     this.wires.push(wire);
     return { ok: true, wire };
   }
@@ -221,7 +226,7 @@ export class Circuit {
     for (const wire of snapshot.wires) {
       const occupied = this.wireInto(wire.to);
       if (occupied && !occupied.fixed) this.wires = this.wires.filter((w) => w !== occupied);
-      this.wires.push({ ...wire, from: { ...wire.from }, to: { ...wire.to } });
+      this.wires.push({ ...wire, id: nextWireId(), from: { ...wire.from }, to: { ...wire.to } });
     }
     this.gateSeq = snapshot.gateSeq ?? this.gateSeq;
   }

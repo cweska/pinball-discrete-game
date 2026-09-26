@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GATECRASHER - wire the machine with logic gates</title>
+    <meta
+      name="description"
+      content="Finish an almost-built pinball machine by wiring its flippers, lamps, coils and toys out of logic gates."
+    />
+    <link rel="icon" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/game.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand__name">GATECRASHER</span>
+          <span class="brand__sub">logic division</span>
+        </div>
+
+        <div class="level-chip" id="level-chip"></div>
+
+        <div class="topbar__progress">
+          <div class="progress" id="progress" role="img"><span class="progress__fill"></span></div>
+          <div class="progress__label" id="progress-label"></div>
+        </div>
+
+        <nav class="topbar__actions" aria-label="Game controls">
+          <button class="btn btn--ghost" type="button" id="btn-map">Act map</button>
+          <button class="btn btn--ghost" type="button" id="btn-values" aria-pressed="true">Values on</button>
+          <button class="btn btn--ghost" type="button" id="btn-mute" aria-pressed="false">Sound on</button>
+          <button class="btn btn--ghost" type="button" id="btn-help">How to play</button>
+        </nav>
+      </header>
+
+      <main class="stage">
+        <section class="machine-panel" aria-label="The machine">
+          <div class="machine" id="machine"></div>
+          <div class="panel panel--controls" id="test-controls"></div>
+        </section>
+
+        <section class="bench-panel" aria-label="The bench">
+          <div class="build-view" id="build-view">
+            <div class="briefing" id="briefing"></div>
+            <div class="hint" id="hint" hidden></div>
+
+            <div class="bench-wrap">
+              <div class="bench-head">
+                <h3 class="panel__title">Bench</h3>
+                <div class="demo-note" id="demo-note"></div>
+              </div>
+              <div class="bench-host" id="bench"></div>
+            </div>
+
+            <div class="bench-bar">
+              <div class="panel panel--palette" id="palette"></div>
+              <div class="actions">
+                <button class="btn btn--primary" type="button" id="btn-check">Test the circuit</button>
+                <button class="btn" type="button" id="btn-hint">Hint</button>
+                <button class="btn" type="button" id="btn-undo">Undo</button>
+                <button class="btn btn--quiet" type="button" id="btn-clear">Clear bench</button>
+              </div>
+            </div>
+
+            <p class="status" id="status" role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="freeplay-view" id="freeplay-view" hidden>
+            <h2 class="freeplay__title">Free Play</h2>
+            <p class="freeplay__body">
+              The machine is running on its own. A ball is loose on the playfield and it is closing the same switches
+              your test buttons close - every circuit you finished is doing the work.
+            </p>
+            <div class="freeplay__count" id="freeplay-count"></div>
+            <div class="freeplay__cols">
+              <div>
+                <h3 class="panel__title">Your circuits</h3>
+                <ul class="freeplay__list" id="freeplay-list"></ul>
+              </div>
+              <div>
+                <h3 class="panel__title">Switch log</h3>
+                <ul class="freeplay__log" id="freeplay-log"></ul>
+              </div>
+            </div>
+            <button class="btn btn--primary" type="button" id="btn-stop-freeplay">Back to the bench</button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
