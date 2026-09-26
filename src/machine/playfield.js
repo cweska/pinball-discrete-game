@@ -169,8 +169,8 @@ function playfieldArt() {
     svg('path', { class: 'pf-ramp', d: 'M 296 596 Q 360 430 306 300 Q 272 200 250 96' }),
     svg('path', { class: 'pf-arch', d: 'M 96 108 Q 200 56 304 108' }),
     // inlane guides feeding the flippers
-    svg('path', { class: 'pf-guide', d: 'M 96 546 Q 112 604 150 636' }),
-    svg('path', { class: 'pf-guide', d: 'M 304 546 Q 288 604 250 636' }),
+    svg('path', { class: 'pf-guide', d: 'M 96 546 Q 112 604 138 636' }),
+    svg('path', { class: 'pf-guide', d: 'M 304 546 Q 288 604 262 636' }),
     svg('path', { class: 'pf-apron', d: 'M 14 668 L 386 668 L 386 696 L 14 696 Z' }),
     svg('path', { class: 'pf-drain', d: 'M 168 668 L 232 668 L 214 696 L 186 696 Z' }),
     svg('text', { class: 'pf-drain-label', x: 200, y: 688, text: 'OUTHOLE' })
