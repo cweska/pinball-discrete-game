@@ -70,18 +70,32 @@ function slingNode(id, def) {
   return group;
 }
 
+/** Degrees from horizontal: rest tips hang toward the outhole; fire swings them up the playfield. */
+const FLIPPER_REST = 32;
+const FLIPPER_UP = 48;
+
+function flipperAngle(def, on) {
+  // flip: left = -1, right = +1. Bats are drawn pointing inward, so rest
+  // rotates the tip down (toward the drain) and fire rotates it up.
+  return on ? FLIPPER_UP * def.flip : -FLIPPER_REST * def.flip;
+}
+
 function flipperNode(id, def) {
   const group = svg('g', { class: 'part part--flipper', dataset: { part: id } });
-  const length = 62 * def.flip;
-  const bat = svg('g', { class: 'flipper__bat', style: `--pivot-x:${def.x}px; --pivot-y:${def.y}px` });
+  // Inward: left bat extends right, right bat extends left.
+  const inward = -def.flip;
+  const length = 66;
+  const tipX = def.x + inward * length;
+  const bat = svg('g', { class: 'flipper__bat' });
+  bat.setAttribute('transform', `rotate(${flipperAngle(def, false)} ${def.x} ${def.y})`);
   bat.append(
     svg('path', {
       class: 'flipper__bar',
-      d: `M ${def.x} ${def.y - 9} L ${def.x + length} ${def.y - 4} L ${def.x + length} ${def.y + 5} L ${def.x} ${def.y + 11} Z`,
+      d: `M ${def.x} ${def.y - 10} L ${tipX} ${def.y - 3.5} L ${tipX} ${def.y + 4} L ${def.x} ${def.y + 11} Z`,
     }),
     svg('circle', { class: 'flipper__pivot', cx: def.x, cy: def.y, r: 7 })
   );
-  group.append(bat, svg('text', { class: 'part__label', x: def.x + length * 0.4, y: def.y + 30, text: def.label }));
+  group.append(bat, svg('text', { class: 'part__label', x: def.x, y: def.y + 34, text: def.label }));
   return group;
 }
 
@@ -286,8 +300,7 @@ export function createMachine(root) {
         const bat = node.querySelector('.flipper__bat');
         if (bat) {
           const on = !!value && (state.live || state.target);
-          const angle = on ? 34 * (entry.def.flip || 1) : 0;
-          bat.setAttribute('transform', `rotate(${angle} ${entry.def.x} ${entry.def.y})`);
+          bat.setAttribute('transform', `rotate(${flipperAngle(entry.def, on)} ${entry.def.x} ${entry.def.y})`);
         }
       }
 

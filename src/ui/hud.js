@@ -92,12 +92,13 @@ export function createHud(refs) {
       tableOpen = false;
       const act = ACTS.find((a) => a.act === level.act);
       clear(refs.levelChip);
-      refs.levelChip.append(
+      const chip = [
         h('span', { class: 'level-chip__act', text: `Act ${act.act} \u00b7 ${act.title}` }),
         h('span', { class: 'level-chip__name', text: `${level.number}. ${level.title}` }),
         h('span', { class: 'level-chip__count', text: `${level.number} of ${LEVELS.length}` }),
-        solved ? h('span', { class: 'level-chip__done', text: 'done' }) : null
-      );
+      ];
+      if (solved) chip.push(h('span', { class: 'level-chip__done', text: 'done' }));
+      refs.levelChip.append(...chip);
       renderBriefing();
       this.clearHint();
       this.setStatus(
