@@ -152,10 +152,21 @@ export function createTestControls(root, { onChange, onSound } = {}) {
     get values() {
       return { ...values };
     },
-    /** True while the student is driving the machine, which suspends the demo clock. */
+    /** True while the student is driving the machine, which suspends signal testing. */
     isLive(now = performance.now()) {
       if (now < liveUntil) return true;
       return level.io.inputs.some((terminal) => values[terminal.id] !== rest[terminal.id]);
+    },
+    /**
+     * Put every switch back at rest without counting as a student action, so a
+     * Signal Testing step is what the bench shows.
+     */
+    release() {
+      values = { ...rest };
+      for (const id of cycleIndex.keys()) cycleIndex.set(id, 0);
+      liveUntil = 0;
+      onChange?.({ ...values });
+      paint();
     },
     reset() {
       values = { ...rest };

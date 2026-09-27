@@ -111,13 +111,40 @@ function targetNode(id, def) {
   return group;
 }
 
+/**
+ * Coil housing with the piston along `aim`. 'up' fires toward the top of the
+ * table (kickback, auto-launch). The default points right.
+ */
+function coilGeometry(def) {
+  if (def.aim === 'up') {
+    return {
+      up: true,
+      body: { x: def.x - 10, y: def.y - 15, width: 20, height: 30 },
+      rod: { x: def.x - 3, y: def.y - 29, width: 6, height: 16 },
+      winding: `M ${def.x - 10} ${def.y - 9} h 20 M ${def.x - 10} ${def.y - 3} h 20 M ${def.x - 10} ${def.y + 3} h 20 M ${def.x - 10} ${def.y + 9} h 20`,
+      labelY: def.y + 32,
+    };
+  }
+  return {
+    up: false,
+    body: { x: def.x - 15, y: def.y - 10, width: 30, height: 20 },
+    rod: { x: def.x + 13, y: def.y - 3, width: 16, height: 6 },
+    winding: `M ${def.x - 9} ${def.y - 10} v 20 M ${def.x - 3} ${def.y - 10} v 20 M ${def.x + 3} ${def.y - 10} v 20 M ${def.x + 9} ${def.y - 10} v 20`,
+    labelY: def.y + 24,
+  };
+}
+
 function coilNode(id, def) {
-  const group = svg('g', { class: 'part part--coil', dataset: { part: id } });
+  const geo = coilGeometry(def);
+  const group = svg('g', {
+    class: geo.up ? 'part part--coil coil--up' : 'part part--coil',
+    dataset: { part: id },
+  });
   group.append(
-    svg('rect', { class: 'coil__body', x: def.x - 15, y: def.y - 10, width: 30, height: 20, rx: 3 }),
-    svg('g', { class: 'coil__plunger' }, svg('rect', { class: 'coil__rod', x: def.x + 13, y: def.y - 3, width: 16, height: 6, rx: 2 })),
-    svg('path', { class: 'coil__winding', d: `M ${def.x - 9} ${def.y - 10} v 20 M ${def.x - 3} ${def.y - 10} v 20 M ${def.x + 3} ${def.y - 10} v 20 M ${def.x + 9} ${def.y - 10} v 20` }),
-    svg('text', { class: 'part__label', x: def.x, y: def.y + 24, text: def.label })
+    svg('rect', { class: 'coil__body', ...geo.body, rx: 3 }),
+    svg('g', { class: 'coil__plunger' }, svg('rect', { class: 'coil__rod', ...geo.rod, rx: 2 })),
+    svg('path', { class: 'coil__winding', d: geo.winding }),
+    svg('text', { class: 'part__label', x: def.x, y: geo.labelY, text: def.label })
   );
   return group;
 }

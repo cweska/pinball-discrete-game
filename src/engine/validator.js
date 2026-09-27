@@ -11,6 +11,24 @@
 import { gateDef, OUT } from './gates.js';
 import { createState, settle } from './simulate.js';
 
+/**
+ * Every 0/1 combination of these inputs. The last input toggles fastest, so the
+ * list reads like binary counting (and like the goal table).
+ */
+export function enumerateInputs(inputIds) {
+  const bits = inputIds.length;
+  const total = 1 << bits;
+  const rows = [];
+  for (let mask = 0; mask < total; mask++) {
+    const inputs = {};
+    inputIds.forEach((id, index) => {
+      inputs[id] = (mask >> (bits - 1 - index)) & 1;
+    });
+    rows.push(inputs);
+  }
+  return rows;
+}
+
 export function normalizeRows(spec, inputIds) {
   if (spec.rows) {
     return spec.rows.map((row) =>
@@ -18,18 +36,7 @@ export function normalizeRows(spec, inputIds) {
     );
   }
   if (typeof spec.expect === 'function') {
-    const rows = [];
-    const bits = inputIds.length;
-    const total = 1 << bits;
-    for (let mask = 0; mask < total; mask++) {
-      const inputs = {};
-      // Last input listed toggles fastest, so the table reads like binary counting.
-      inputIds.forEach((id, index) => {
-        inputs[id] = (mask >> (bits - 1 - index)) & 1;
-      });
-      rows.push({ in: inputs, out: spec.expect(inputs) });
-    }
-    return rows;
+    return enumerateInputs(inputIds).map((inputs) => ({ in: inputs, out: spec.expect(inputs) }));
   }
   throw new Error('A truthTable spec needs either rows or an expect function.');
 }

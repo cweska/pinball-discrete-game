@@ -46,7 +46,7 @@ export function createApp(refs) {
   let mode = 'build';
   let undoStack = [];
   let redoStack = [];
-  let wasDemo = null;
+  let signalStamp = '';
   let saveTimer = null;
   let inputs = {};
 
@@ -136,10 +136,10 @@ export function createApp(refs) {
       }
     }
     simState = createState(0);
-    pulse = createPulse(level);
+    pulse = createPulse(level, { repeat: pulse.repeat });
     undoStack = [];
     redoStack = [];
-    wasDemo = null;
+    signalStamp = '';
 
     bench.setLevel(level, circuit);
     bench.setShowValues(progress.settings().showValues);
@@ -149,6 +149,7 @@ export function createApp(refs) {
     hud.setLevel(level, { solved: progress.isSolved(level.id) });
     hud.setProgress(solvedCount());
     hints.setLevel(level, { tier: progress.hintTier(level.id) });
+    publishSignal(false);
     machine.resetEdges();
     machine.setScore(0);
     progress.setCurrentLevel(number);
@@ -333,6 +334,23 @@ export function createApp(refs) {
     return states;
   }
 
+  function combinationBits(vector) {
+    return level.io.inputs.map((terminal) => `${terminal.short || terminal.label}=${vector[terminal.id] ? 1 : 0}`).join(' ');
+  }
+
+  function publishSignal(paused) {
+    const stamp = `${level.id}|${pulse.index}|${pulse.repeat}|${paused}|${combinationBits(pulse.vector())}`;
+    if (stamp === signalStamp) return;
+    signalStamp = stamp;
+    hud.setSignalTesting({
+      index: pulse.index,
+      total: pulse.vectors.length,
+      bits: combinationBits(pulse.vector()),
+      repeat: pulse.repeat,
+      paused,
+    });
+  }
+
   let lastFrame = performance.now();
   function frame(now) {
     const delta = Math.min(90, now - lastFrame);
@@ -343,24 +361,38 @@ export function createApp(refs) {
       machine.setScore(machine.score);
     } else {
       const isLive = controls.isLive(now);
-      const demo = pulse.vectorAt(now);
-      const values = isLive ? controls.values : demo.vector;
+      pulse.tick(now, { paused: isLive });
+      const values = isLive ? controls.values : pulse.vector();
       if (!isLive) inputs = values;
 
       sim = settle(circuit, values, simState);
       bench.paint(sim, { phase: pulse.dotPhase(now), animate: !reducedMotion });
       machine.applyState(machineStates({ sound: isLive }), { sound: isLive, scoring: isLive });
-
-      if (wasDemo !== !isLive) {
-        wasDemo = !isLive;
-        hud.setDemo(!isLive, demo.note);
-      }
+      publishSignal(isLive);
       hints.tick(delta);
     }
     requestAnimationFrame(frame);
   }
 
   // --- wiring up the chrome ------------------------------------------------
+
+  hud.bindSignalTesting({
+    onStep: (delta) => {
+      audio.unlockAudio();
+      audio.play('relay');
+      controls.release();
+      pulse.step(delta);
+      signalStamp = '';
+      publishSignal(false);
+    },
+    onToggleRepeat: () => {
+      audio.unlockAudio();
+      audio.play('relay');
+      pulse.setRepeat(!pulse.repeat);
+      signalStamp = '';
+      publishSignal(controls.isLive());
+    },
+  });
 
   refs.checkButton.addEventListener('click', check);
   refs.hintButton.addEventListener('click', () => {

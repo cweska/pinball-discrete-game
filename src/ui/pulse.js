@@ -1,57 +1,66 @@
 /**
- * The demo clock.
+ * Signal testing.
  *
- * When nobody is pressing anything, the bench keeps cycling example signals so
- * the circuit is never a still picture. Combinational levels walk their truth
- * table; stateful levels walk the story in their first scenario, which is a far
- * better demonstration than random bits.
+ * The bench can walk every input combination on its own, or hold still on one
+ * of them. Combinations are the full 2^n set (last input toggles fastest), the
+ * same order the goal table uses. Repeat advances one combination at a time;
+ * a hitch or a hidden tab does not skip ahead, because a stateful circuit only
+ * sees the vector applied on each step.
  */
 
-import { normalizeRows } from '../engine/validator.js';
+import { enumerateInputs } from '../engine/validator.js';
 
-const VECTOR_MS = 1600;
+export const SIGNAL_STEP_MS = 1600;
 const DOT_MS = 1300;
 
-export function demoVectors(level) {
-  if (level.demo) return level.demo;
-  const inputIds = level.io.inputs.map((t) => t.id);
-  const rest = {};
-  for (const terminal of level.io.inputs) rest[terminal.id] = terminal.rest ? 1 : 0;
+export function createPulse(level, { repeat = true } = {}) {
+  const vectors = enumerateInputs(level.io.inputs.map((terminal) => terminal.id));
+  let index = 0;
+  let repeating = !!repeat;
+  let heldSince = null;
 
-  if ((level.spec.kind || 'truthTable') === 'truthTable') {
-    return normalizeRows(level.spec, inputIds).map((row) => {
-      const vector = { ...rest };
-      for (const id of inputIds) vector[id] = row.in[id] ? 1 : 0;
-      return vector;
-    });
-  }
-
-  const scenario = level.spec.scenarios[0];
-  const running = { ...rest, ...(scenario.initial || {}) };
-  const vectors = [{ ...running }];
-  for (const step of scenario.steps) {
-    Object.assign(running, step.set || {});
-    vectors.push({ ...running, __note: step.note });
-  }
-  return vectors;
-}
-
-export function createPulse(level) {
-  const vectors = demoVectors(level);
   return {
-    vectors,
-    /** Which example pattern is on the bench right now. */
-    vectorAt(time) {
-      const index = Math.floor(time / VECTOR_MS) % vectors.length;
-      return { vector: vectors[index], index, note: vectors[index].__note || null };
+    get vectors() {
+      return vectors;
+    },
+    get index() {
+      return index;
+    },
+    get repeat() {
+      return repeating;
+    },
+    vector() {
+      return { ...vectors[index] };
+    },
+    /** Move by one combination. Negative goes backwards. Wraps at both ends. */
+    step(delta) {
+      const count = vectors.length || 1;
+      index = (index + delta) % count;
+      if (index < 0) index += count;
+      heldSince = null;
+    },
+    setRepeat(on) {
+      repeating = !!on;
+      heldSince = null;
+    },
+    /**
+     * Advance while Repeat is on. `paused` freezes the dwell (the student is
+     * holding the test controls) so releasing them does not skip a combination.
+     */
+    tick(now, { paused = false } = {}) {
+      if (heldSince == null) heldSince = now;
+      if (paused || !repeating) {
+        heldSince = now;
+        return;
+      }
+      if (now - heldSince >= SIGNAL_STEP_MS) {
+        index = (index + 1) % vectors.length;
+        heldSince = now;
+      }
     },
     /** 0..1 position of the travelling dots. */
     dotPhase(time) {
       return (time % DOT_MS) / DOT_MS;
-    },
-    /** 0..1 progress through the current pattern, for the little countdown bar. */
-    vectorProgress(time) {
-      return (time % VECTOR_MS) / VECTOR_MS;
     },
   };
 }
