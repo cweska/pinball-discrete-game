@@ -12,7 +12,7 @@ const app = createApp({
   levelChip: qs('#level-chip'),
   progress: qs('#progress'),
   progressLabel: qs('#progress-label'),
-  demoNote: qs('#demo-note'),
+  signalTesting: qs('#signal-testing'),
   buildView: qs('#build-view'),
   freeplayView: qs('#freeplay-view'),
   freeplayList: qs('#freeplay-list'),

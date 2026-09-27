@@ -58,6 +58,42 @@ function sequenceList(level) {
 export function createHud(refs) {
   let level = null;
   let tableOpen = false;
+  let onSignalStep = null;
+  let onSignalRepeat = null;
+
+  const signalCount = h('span', { class: 'signal-test__count', text: '' });
+  const signalBits = h('span', { class: 'signal-test__bits', text: '' });
+  const signalReadout = h('span', { class: 'signal-test__readout', 'aria-live': 'polite' }, signalCount, signalBits);
+  const repeatButton = h('button', {
+    class: 'signal-test__btn signal-test__repeat',
+    type: 'button',
+    'aria-pressed': 'true',
+    text: 'Repeat',
+  });
+  const backButton = h('button', {
+    class: 'signal-test__btn',
+    type: 'button',
+    'aria-label': 'Previous input combination',
+    title: 'Previous combination',
+    text: 'Back',
+  });
+  const nextButton = h('button', {
+    class: 'signal-test__btn',
+    type: 'button',
+    'aria-label': 'Next input combination',
+    title: 'Next combination',
+    text: 'Next',
+  });
+  backButton.addEventListener('click', () => onSignalStep?.(-1));
+  nextButton.addEventListener('click', () => onSignalStep?.(1));
+  repeatButton.addEventListener('click', () => onSignalRepeat?.());
+  refs.signalTesting.append(
+    h('span', { class: 'signal-test__label', text: 'Signal Testing:' }),
+    backButton,
+    nextButton,
+    repeatButton,
+    signalReadout
+  );
 
   function renderBriefing() {
     clear(refs.briefing);
@@ -137,17 +173,20 @@ export function createHud(refs) {
       refs.hint.hidden = true;
     },
 
-    setDemo(isDemo, note) {
-      setClass(refs.bench, 'is-demo', isDemo);
-      clear(refs.demoNote);
-      if (isDemo) {
-        refs.demoNote.append(
-          h('span', { class: 'demo__pip' }),
-          h('span', { text: note ? `Example signals: ${note}` : 'Example signals running' })
-        );
-      } else {
-        refs.demoNote.append(h('span', { class: 'demo__pip demo__pip--live' }), h('span', { text: 'You are driving' }));
-      }
+    bindSignalTesting({ onStep, onToggleRepeat }) {
+      onSignalStep = onStep;
+      onSignalRepeat = onToggleRepeat;
+    },
+
+    setSignalTesting({ index, total, bits, repeat, paused }) {
+      signalCount.textContent = `${index + 1}/${total}`;
+      signalBits.textContent = bits;
+      signalReadout.title = paused ? `Test controls have the switches. Next up: ${bits}` : bits;
+      repeatButton.setAttribute('aria-pressed', repeat ? 'true' : 'false');
+      repeatButton.title = repeat
+        ? 'Stop on this combination'
+        : 'Cycle through every input combination';
+      setClass(refs.signalTesting, 'is-paused', paused);
     },
 
     setProgress(solvedCount) {
