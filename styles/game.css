@@ -499,17 +499,36 @@
 
 .bench-panel {
   display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
 }
 
 .build-view {
   display: grid;
+  grid-template-areas:
+    'briefing'
+    'hint'
+    'bench'
+    'bar'
+    'status';
   grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   gap: 10px;
   min-height: 0;
+  overflow: auto;
+}
+
+/* Hidden hint is display:none, so drop its track instead of leaving a gap. */
+.build-view:not(:has(.hint:not([hidden]))) {
+  grid-template-areas:
+    'briefing'
+    'bench'
+    'bar'
+    'status';
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
 .briefing {
+  grid-area: briefing;
   padding: 12px 14px;
   border-radius: var(--radius);
   border: 1px solid var(--edge);
@@ -614,6 +633,7 @@
 
 /* hint card */
 .hint {
+  grid-area: hint;
   padding: 10px 13px;
   border-radius: var(--radius);
   border: 1px solid color-mix(in srgb, var(--live) 40%, var(--edge));
@@ -646,9 +666,11 @@
 
 /* bench frame */
 .bench-wrap {
+  grid-area: bench;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
   border-radius: var(--radius);
   border: 1px solid var(--edge);
   background: linear-gradient(180deg, #0f1421, #0a0e18);
@@ -1024,10 +1046,12 @@
 /* --- bench bar ----------------------------------------------------------- */
 
 .bench-bar {
+  grid-area: bar;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: stretch;
+  min-height: min-content;
 }
 
 .chips {
@@ -1108,6 +1132,7 @@
   flex-direction: column;
   gap: 6px;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .actions .btn {
@@ -1116,6 +1141,7 @@
 
 /* status */
 .status {
+  grid-area: status;
   display: flex;
   align-items: center;
   gap: 9px;
