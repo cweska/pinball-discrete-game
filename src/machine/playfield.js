@@ -7,7 +7,7 @@
  */
 
 import { BACKGLASS_VIEW, PARTS, PLAYFIELD_VIEW } from './parts.js';
-import { clear, setClass, svg } from '../util/dom.js';
+import { clear, prefersReducedMotion, setClass, svg } from '../util/dom.js';
 import * as audio from './audio.js';
 
 const SCORES = {
@@ -205,17 +205,77 @@ function playfieldArt() {
   return art;
 }
 
-function reelDigits(index) {
-  const group = svg('g', { class: 'reel', dataset: { reel: index } });
-  const strip = svg('g', { class: 'reel__strip' });
-  for (let d = 0; d < 11; d++) {
-    strip.append(svg('text', { class: 'reel__digit', x: 0, y: d * 34, text: String(d % 10) }));
-  }
-  group.append(
-    svg('rect', { class: 'reel__window', x: -13, y: -24, width: 26, height: 32, rx: 3 }),
-    svg('g', { class: 'reel__clip' }, strip)
+/** Distance between digit centers. The window is 32px tall, centered at y = -8. */
+const REEL_PITCH = 34;
+const REEL_CENTER = -8;
+
+function digitGlyph(digit, y) {
+  return svg('text', { class: 'reel__digit', x: 0, y, text: String(digit) });
+}
+
+let reelClipSerial = 0;
+
+function reelWindowClip(id) {
+  return svg('clipPath', { id, clipPathUnits: 'userSpaceOnUse' },
+    svg('rect', { x: -13, y: -24, width: 26, height: 32, rx: 3 })
   );
-  return group;
+}
+
+/**
+ * One score reel. The strip starts as a single centered 0 and only grows in the
+ * scroll-up direction. Fragment URLs in an external stylesheet resolve against
+ * the CSS file, so the clip path is set on the element.
+ */
+function createReel(index, clipId) {
+  const strip = svg('g', { class: 'reel__strip' });
+  strip.append(digitGlyph(0, 0));
+  strip.style.transform = `translateY(${REEL_CENTER}px)`;
+  const group = svg('g', { class: 'reel', dataset: { reel: index } },
+    svg('rect', { class: 'reel__window', x: -13, y: -24, width: 26, height: 32, rx: 3 }),
+    svg('g', { class: 'reel__clip', 'clip-path': `url(#${clipId})` }, strip)
+  );
+  return { group, strip, digit: 0, generation: 0, nextIndex: 1 };
+}
+
+function motionReduced() {
+  return prefersReducedMotion() || document.body.classList.contains('reduced-motion');
+}
+
+function settleReel(reel) {
+  const glyphs = [...reel.strip.children];
+  const landed = glyphs.pop();
+  for (const glyph of glyphs) glyph.remove();
+  if (landed) landed.setAttribute('y', '0');
+  reel.nextIndex = 1;
+  const previous = reel.strip.style.transition;
+  reel.strip.style.transition = 'none';
+  reel.strip.style.transform = `translateY(${REEL_CENTER}px)`;
+  void reel.strip.getBoundingClientRect();
+  reel.strip.style.transition = previous;
+}
+
+function rollReel(reel, target) {
+  if (reel.digit === target) return;
+  const steps = (target - reel.digit + 10) % 10;
+  for (let step = 1; step <= steps; step++) {
+    reel.strip.append(digitGlyph((reel.digit + step) % 10, reel.nextIndex * REEL_PITCH));
+    reel.nextIndex += 1;
+  }
+  reel.digit = target;
+  const generation = ++reel.generation;
+  const visibleY = (reel.nextIndex - 1) * REEL_PITCH;
+  reel.strip.style.transform = `translateY(${REEL_CENTER - visibleY}px)`;
+  if (motionReduced()) {
+    settleReel(reel);
+    return;
+  }
+  function onEnd(event) {
+    if (event.propertyName !== 'transform') return;
+    reel.strip.removeEventListener('transitionend', onEnd);
+    if (reel.generation !== generation) return;
+    settleReel(reel);
+  }
+  reel.strip.addEventListener('transitionend', onEnd);
 }
 
 export function createMachine(root) {
@@ -238,22 +298,24 @@ export function createMachine(root) {
   let score = 0;
   let spinning = false;
   const reels = [];
+  const clipId = `reel-window-${++reelClipSerial}`;
 
   function build() {
     clear(backglass);
     clear(playfield);
 
     backglass.append(
+      svg('defs', {}, reelWindowClip(clipId)),
       svg('rect', { class: 'bg-panel', x: 6, y: 6, width: 388, height: 138, rx: 10 }),
       svg('text', { class: 'bg-title', x: 200, y: 40, text: 'GATECRASHER' }),
       svg('text', { class: 'bg-sub', x: 200, y: 58, text: 'LOGIC DIVISION \u00b7 MODEL NAND-8' })
     );
     const reelRow = svg('g', { class: 'reels', transform: 'translate(120 92)' });
     for (let i = 0; i < 5; i++) {
-      const reel = reelDigits(i);
-      reel.setAttribute('transform', `translate(${i * 32} 0)`);
-      reelRow.append(reel);
-      reels.push(reel.querySelector('.reel__strip'));
+      const reel = createReel(i, clipId);
+      reel.group.setAttribute('transform', `translate(${i * 32} 0)`);
+      reelRow.append(reel.group);
+      reels.push(reel);
     }
     backglass.append(reelRow, svg('text', { class: 'bg-caption', x: 40, y: 92, text: 'SCORE' }));
 
@@ -281,8 +343,8 @@ export function createMachine(root) {
     score = Math.max(0, Math.min(99999, value));
     const digits = String(score).padStart(5, '0').split('').map(Number);
     digits.forEach((digit, index) => {
-      const strip = reels[index];
-      if (strip) strip.style.transform = `translateY(${-digit * 34}px)`;
+      const reel = reels[index];
+      if (reel) rollReel(reel, digit);
     });
   }
 
