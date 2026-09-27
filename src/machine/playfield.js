@@ -207,6 +207,7 @@ export function createMachine(root) {
 
   const nodes = new Map();
   const previous = new Map();
+  const targetsDown = new Map();
   let score = 0;
   let spinning = false;
   const reels = [];
@@ -298,9 +299,13 @@ export function createMachine(root) {
 
       if (entry.def.kind === 'flipper') {
         const bat = node.querySelector('.flipper__bat');
+        const on = !!value && (state.live || state.target);
         if (bat) {
-          const on = !!value && (state.live || state.target);
           bat.setAttribute('transform', `rotate(${flipperAngle(entry.def, on)} ${entry.def.x} ${entry.def.y})`);
+        }
+        if (sound && was !== undefined && (state.live || state.target)) {
+          if (was === 0 && value === 1) audio.play('fx_Flipperup');
+          if (was === 1 && value === 0) audio.play('fx_Flipperdown');
         }
       }
 
@@ -328,9 +333,14 @@ export function createMachine(root) {
     }
   }
 
-  function setTargetDown(id, down) {
+  function setTargetDown(id, down, { sound = true } = {}) {
     const entry = nodes.get(id);
-    if (entry) setClass(entry.node, 'is-down', !!down);
+    if (!entry) return;
+    const isDown = !!down;
+    setClass(entry.node, 'is-down', isDown);
+    const wasDown = targetsDown.get(id);
+    targetsDown.set(id, isDown);
+    if (sound && wasDown === false && isDown) audio.play('target');
   }
 
   function describe(id, text) {

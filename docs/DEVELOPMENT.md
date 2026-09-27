@@ -8,8 +8,9 @@ layout; this is the stuff you would otherwise have to re-derive from the code.
 - **No build step, ever.** Plain ES modules loaded straight from `index.html`.
   Nothing is transpiled or bundled, and `package.json` has no dependencies. If a
   change would need npm packages at runtime, it is the wrong change.
-- **No media files.** Sound is synthesised in `src/machine/audio.js`, art is
-  inline SVG. Keeps school networks and licensing out of it.
+- **Art stays inline SVG.** Table sounds are the WAV clips in `assets/sounds/`,
+  played from `src/machine/audio.js`. Bench cues (place, wire, reject, solved)
+  are still synthesised there.
 - **Levels are data.** A new level should be a new file in `src/levels/` plus one
   line in `src/levels/index.js`. If it needs engine changes, the engine is
   probably missing an abstraction.

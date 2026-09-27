@@ -1,0 +1,1 @@
+Clips from the Visual Pinball example table (vpinball/vpinball, src/assets/exampleTable.vpx), kept under their sound-manager names.

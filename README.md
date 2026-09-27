@@ -10,7 +10,7 @@ flipper stays limp, the pop bumper fires when nobody is playing, or the lock lam
 forgets the ball was ever there.
 
 - No build step, no dependencies, no accounts.
-- Every sound is synthesised, so there are no media files.
+- Table sounds are short WAV clips. Bench clicks stay synthesised.
 - Progress lives in the browser and the whole thing works offline.
 
 ## Run it
