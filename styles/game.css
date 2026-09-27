@@ -75,12 +75,8 @@
   stroke: #303c5c;
 }
 
-.reel__clip {
-  clip-path: inset(-22px -13px -8px -13px);
-}
-
 .reel__strip {
-  transition: transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1);
+  transition: transform 420ms cubic-bezier(0.22, 0.8, 0.3, 1);
 }
 
 .reduced-motion .reel__strip {
