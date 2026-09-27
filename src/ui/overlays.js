@@ -101,6 +101,7 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
           h('li', {}, h('strong', { text: 'Place a gate. ' }), 'Drag one out of the parts bin, or click it and then click where it goes. Early builds have sockets; later ones let you put gates anywhere.'),
           h('li', {}, h('strong', { text: 'Wire it. ' }), 'Drag from the circle on the right of a gate, or click a whole terminal, then drop on an input pin or a TO THE MACHINE terminal. Click a pin then another pin works too. Click a wire to remove it. One output can feed as many inputs as you like.'),
           h('li', {}, h('strong', { text: 'Watch the flow. ' }), 'Dots travel along every live wire. Bright and solid means 1, dim and dashed means 0, grey means nothing is driving it yet.'),
+          h('li', {}, h('strong', { text: 'Step the inputs. ' }), 'Signal Testing walks every combination of the input switches. Back and Next move one combination at a time. Repeat cycles through all of them until you turn it off.'),
           h('li', {}, h('strong', { text: 'Test it. ' }), 'The test controls close real switches. Hold, tap or flip them and watch the machine. Then press Test the circuit to check every case at once.'),
           h('li', {}, h('strong', { text: 'Stuck? ' }), 'Hints arrive on their own after a couple of minutes, or press Hint whenever you want one.')
         ),

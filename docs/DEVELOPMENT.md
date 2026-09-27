@@ -71,10 +71,12 @@ see exactly which one broke) and `npm run guide` to regenerate the teacher guide
 ## Where the moving parts live
 
 - `src/ui/app.js` is the controller and owns the frame loop. Each frame it picks
-  the input values (student's test controls if they are driving, otherwise the
-  demo clock), settles the circuit, paints the bench, and pushes part states into
-  the machine. Sound and scoring are suppressed while the demo clock is driving,
-  which is why the machine is animated but quiet between interactions.
+  the input values (the student's test controls if they are driving, otherwise
+  the combination selected under Signal Testing), settles the circuit, paints
+  the bench, and pushes part states into the machine. Sound and scoring are
+  suppressed while Signal Testing is driving, which is why the machine is
+  animated but quiet between interactions. Repeat walks every input combination;
+  Back and Next hold on one. `src/ui/pulse.js` owns that index.
 - `src/ui/bench.js` is the editor. Structural changes re-render the whole SVG
   (it is tiny); `paint()` only touches classes and dot positions, so it is safe
   to call at 60fps.
