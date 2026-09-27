@@ -51,10 +51,12 @@ export const PARTS = {
   'slingshot.right': { kind: 'sling', label: 'SLING R', zone: 'playfield', x: 304, y: 560, flip: 1, sound: 'right_slingshot' },
   'flipper.left': { kind: 'flipper', label: 'FLIPPER L', zone: 'playfield', x: 128, y: 632, flip: -1, sound: 'fx_Flipperup' },
   'flipper.right': { kind: 'flipper', label: 'FLIPPER R', zone: 'playfield', x: 272, y: 632, flip: 1, sound: 'fx_Flipperup' },
-  'coil.kickback': { kind: 'coil', label: 'KICKBACK', zone: 'playfield', x: 52, y: 618, aim: 'up', sound: 'popper_ball', pulse: true },
+  // Lane midpoints. The outlane sits between the wall (14) and rail (58); the shooter lane sits between the rail (344) and wall (386).
+  // Captions stay short so they fit in the lane instead of crossing the guardrail.
+  'coil.kickback': { kind: 'coil', label: 'KICK', zone: 'playfield', x: 36, y: 618, aim: 'up', sound: 'popper_ball', pulse: true },
   // Above the kickback, clear of the piston that fires up the outlane.
-  'lamp.kickbackArmed': { kind: 'lamp', label: 'ARMED', zone: 'playfield', x: 52, y: 540, size: 10, color: 'red' },
-  'coil.autoLaunch': { kind: 'coil', label: 'AUTO LAUNCH', zone: 'playfield', x: 348, y: 618, aim: 'up', sound: 'plunger', pulse: true },
+  'lamp.kickbackArmed': { kind: 'lamp', label: 'ARM', zone: 'playfield', x: 36, y: 540, size: 10, color: 'red' },
+  'coil.autoLaunch': { kind: 'coil', label: 'AUTO', zone: 'playfield', x: 365, y: 618, aim: 'up', sound: 'plunger', pulse: true },
 };
 
 export function part(id) {
