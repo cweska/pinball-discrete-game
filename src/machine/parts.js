@@ -51,9 +51,10 @@ export const PARTS = {
   'slingshot.right': { kind: 'sling', label: 'SLING R', zone: 'playfield', x: 304, y: 560, flip: 1, sound: 'slap' },
   'flipper.left': { kind: 'flipper', label: 'FLIPPER L', zone: 'playfield', x: 128, y: 632, flip: -1, sound: 'coil' },
   'flipper.right': { kind: 'flipper', label: 'FLIPPER R', zone: 'playfield', x: 272, y: 632, flip: 1, sound: 'coil' },
-  'coil.kickback': { kind: 'coil', label: 'KICKBACK', zone: 'playfield', x: 52, y: 618, sound: 'coil', pulse: true },
-  'lamp.kickbackArmed': { kind: 'lamp', label: 'ARMED', zone: 'playfield', x: 52, y: 582, size: 10, color: 'red' },
-  'coil.autoLaunch': { kind: 'coil', label: 'AUTO LAUNCH', zone: 'playfield', x: 348, y: 618, sound: 'coil', pulse: true },
+  'coil.kickback': { kind: 'coil', label: 'KICKBACK', zone: 'playfield', x: 52, y: 618, aim: 'up', sound: 'coil', pulse: true },
+  // Above the kickback, clear of the piston that fires up the outlane.
+  'lamp.kickbackArmed': { kind: 'lamp', label: 'ARMED', zone: 'playfield', x: 52, y: 540, size: 10, color: 'red' },
+  'coil.autoLaunch': { kind: 'coil', label: 'AUTO LAUNCH', zone: 'playfield', x: 348, y: 618, aim: 'up', sound: 'coil', pulse: true },
 };
 
 export function part(id) {
