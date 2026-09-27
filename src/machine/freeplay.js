@@ -45,10 +45,10 @@ export const STANDING = [
 
 /** Ball path. Each waypoint is where the ball goes next, how long it takes, and what it closes. */
 const SCRIPT = [
-  { x: 352, y: 660, ms: 600, event: 'reset' },
-  { x: 352, y: 620, ms: 400, event: 'launch' },
-  { x: 348, y: 300, ms: 800 },
-  { x: 318, y: 132, ms: 500 },
+  { x: 365, y: 660, ms: 600, event: 'reset' },
+  { x: 365, y: 620, ms: 400, event: 'launch' },
+  { x: 365, y: 300, ms: 800 },
+  { x: 346, y: 132, ms: 500 },
   { x: 250, y: 74, ms: 420 },
   { x: 176, y: 62, ms: 380 },
   { x: 150, y: 74, ms: 260 },
@@ -79,7 +79,7 @@ const SCRIPT = [
   { x: 176, y: 300, ms: 620 },
   { x: 176, y: 372, ms: 280, event: 'popBumper' },
   { x: 96, y: 520, ms: 520 },
-  { x: 52, y: 618, ms: 420, event: 'outlane' },
+  { x: 36, y: 618, ms: 420, event: 'outlane' },
   { x: 60, y: 480, ms: 460 },
   { x: 150, y: 600, ms: 520 },
   { x: 200, y: 686, ms: 460, event: 'drain' },
