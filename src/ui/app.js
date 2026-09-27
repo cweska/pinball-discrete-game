@@ -305,7 +305,7 @@ export function createApp(refs) {
 
   // --- the loop ------------------------------------------------------------
 
-  function machineStates() {
+  function machineStates({ sound = true } = {}) {
     const live = partsLiveAfter(LEVELS.length);
     const solved = new Set();
     for (const solvedLevel of LEVELS.filter((l) => progress.isSolved(l.id))) {
@@ -329,7 +329,7 @@ export function createApp(refs) {
       states.set(partId, { value: inputs[inputId] ? 1 : 0, live: true, target: false, driven: true });
     }
     for (const [inputId, partId] of Object.entries(level.machine.targetInputs || {})) {
-      machine.setTargetDown(partId, inputs[inputId] === 1);
+      machine.setTargetDown(partId, inputs[inputId] === 1, { sound });
     }
     return states;
   }
@@ -367,7 +367,7 @@ export function createApp(refs) {
 
       sim = settle(circuit, values, simState);
       bench.paint(sim, { phase: pulse.dotPhase(now), animate: !reducedMotion });
-      machine.applyState(machineStates(), { sound: isLive, scoring: isLive });
+      machine.applyState(machineStates({ sound: isLive }), { sound: isLive, scoring: isLive });
       publishSignal(isLive);
       hints.tick(delta);
     }
