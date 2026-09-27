@@ -88,7 +88,7 @@ see exactly which one broke) and `npm run guide` to regenerate the teacher guide
 ## Verifying a change
 
 ```bash
-npm test          # 133 tests, engine + level pack + module link check
+npm test          # 139 tests, engine + level pack + module link check
 npm start         # then click through the level you touched
 npm run guide     # if you changed level copy or answers
 ```
