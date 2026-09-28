@@ -76,9 +76,9 @@ see exactly which one broke) and `npm run guide` to regenerate the teacher guide
   the input values (the student's test controls if they are driving, otherwise
   the combination selected under Try inputs), settles the circuit, paints
   the bench, and pushes part states into the machine. Scoring stays off while
-  Try inputs is driving. Back and Next play a part's sound when that step
-  lights it; Cycle Inputs walks every combination quietly. `src/ui/pulse.js`
-  owns that index.
+  Try inputs is driving. Back and Next move one combination and hold there, and
+  they play a part's sound when that step lights it. Cycle Inputs walks every
+  combination quietly. `src/ui/pulse.js` owns that index.
 - `src/ui/bench.js` is the editor. Structural changes re-render the whole SVG
   (it is tiny); `paint()` only touches classes and dot positions, so it is safe
   to call at 60fps.
