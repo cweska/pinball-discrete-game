@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>GATECRASHER - wire the machine with logic gates</title>
+    <title>GATECRASHER — wire the pinball machine with logic gates</title>
     <meta
       name="description"
-      content="Finish an almost-built pinball machine by wiring its flippers, lamps, coils and toys out of logic gates."
+      content="Finish a pinball machine by connecting its flippers, lights, and coils with logic gates."
     />
     <link rel="icon" type="image/png" href="assets/favicon.png" />
     <link rel="apple-touch-icon" href="assets/favicon.png" />
@@ -18,7 +18,7 @@
       <header class="topbar">
         <div class="brand">
           <span class="brand__name">GATECRASHER</span>
-          <span class="brand__sub">logic division</span>
+          <span class="brand__sub">logic gates</span>
         </div>
 
         <div class="level-chip" id="level-chip"></div>
@@ -29,8 +29,8 @@
         </div>
 
         <nav class="topbar__actions" aria-label="Game controls">
-          <button class="btn btn--ghost" type="button" id="btn-map">Act map</button>
-          <button class="btn btn--ghost" type="button" id="btn-values" aria-pressed="true">Values on</button>
+          <button class="btn btn--ghost" type="button" id="btn-map">Levels</button>
+          <button class="btn btn--ghost" type="button" id="btn-values" aria-pressed="true">0s and 1s on</button>
           <button class="btn btn--ghost" type="button" id="btn-mute" aria-pressed="false">Sound on</button>
           <button class="btn btn--ghost" type="button" id="btn-help">How to play</button>
         </nav>
@@ -50,7 +50,7 @@
             <div class="bench-wrap">
               <div class="bench-head">
                 <h3 class="panel__title">Bench</h3>
-                <div class="signal-test" id="signal-testing" role="group" aria-label="Signal Testing"></div>
+                <div class="signal-test" id="signal-testing" role="group" aria-label="Try every input combination"></div>
               </div>
               <div class="bench-host" id="bench"></div>
             </div>
@@ -71,8 +71,8 @@
           <div class="freeplay-view" id="freeplay-view" hidden>
             <h2 class="freeplay__title">Free Play</h2>
             <p class="freeplay__body">
-              The machine is running on its own. A ball is loose on the playfield and it is closing the same switches
-              your test buttons close - every circuit you finished is doing the work.
+              The castle machine plays by itself. A ball moves around the playfield and hits the same switches as the
+              test buttons. Every circuit you finished is controlling the machine.
             </p>
             <div class="freeplay__count" id="freeplay-count"></div>
             <div class="freeplay__cols">
@@ -81,7 +81,7 @@
                 <ul class="freeplay__list" id="freeplay-list"></ul>
               </div>
               <div>
-                <h3 class="panel__title">Switch log</h3>
+                <h3 class="panel__title">Recent switches</h3>
                 <ul class="freeplay__log" id="freeplay-log"></ul>
               </div>
             </div>

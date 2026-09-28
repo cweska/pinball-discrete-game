@@ -2,12 +2,12 @@ export default {
   id: 'bonus-multiplier',
   act: 3,
   title: 'Bonus Multiplier',
-  subtitle: 'One lamp at a time.',
+  subtitle: 'Light one lamp for each position.',
   brief: {
-    story:
-      'Under the playfield sits a stepper unit: a little motor-driven wheel that clicks round one notch each time you collect a lane. Two switches read its position as a two-digit binary number. Three lamps on the playfield are waiting to be told which position that is.',
-    goal: 'Light 2X at position 01, 3X at position 10, 4X at position 11. At 00 all three stay dark.',
-    note: 'P1 is the twos digit, P0 is the ones digit. Each lamp gets its own gate, and both position lines will need to feed several gates at once.',
+    story: 'A wheel under the playfield clicks ahead once for each lane a player collects. Three lamps should show where it stopped, but they stay off.',
+    goal: 'Light 2X at position 01, 3X at position 10, and 4X at position 11. At 00, all three lamps stay off.',
+    note:
+      'P1 is the 2s place. P0 is the 1s place. Position 01 means P1 is 0 and P0 is 1. Each lamp needs its own AND gate. You will connect each position wire to more than one gate.',
   },
   placement: 'free',
   wiring: 'student',
@@ -17,13 +17,13 @@ export default {
   ],
   io: {
     inputs: [
-      { id: 'p1', label: 'STEPPER P1', short: 'P1', rest: 0, note: 'twos digit' },
-      { id: 'p0', label: 'STEPPER P0', short: 'P0', rest: 0, note: 'ones digit' },
+      { id: 'p1', label: 'POSITION P1', short: 'P1', rest: 0, note: '2s place' },
+      { id: 'p0', label: 'POSITION P0', short: 'P0', rest: 0, note: '1s place' },
     ],
     outputs: [
-      { id: 'lamp2x', label: '2X LAMP', short: '2X' },
-      { id: 'lamp3x', label: '3X LAMP', short: '3X' },
-      { id: 'lamp4x', label: '4X LAMP', short: '4X' },
+      { id: 'lamp2x', label: '2X LAMP', short: '2X', note: 'on = 1' },
+      { id: 'lamp3x', label: '3X LAMP', short: '3X', note: 'on = 1' },
+      { id: 'lamp4x', label: '4X LAMP', short: '4X', note: 'on = 1' },
     ],
   },
   slots: [],
@@ -63,22 +63,27 @@ export default {
     celebrate: 'bonusSweep',
   },
   testControls: [
-    { kind: 'cycle', id: 'step', label: 'Click the stepper on', steps: [
-      { p1: 0, p0: 0 },
-      { p1: 0, p0: 1 },
-      { p1: 1, p0: 0 },
-      { p1: 1, p0: 1 },
-    ] },
+    {
+      kind: 'cycle',
+      id: 'step',
+      label: 'Next position',
+      steps: [
+        { p1: 0, p0: 0 },
+        { p1: 0, p0: 1 },
+        { p1: 1, p0: 0 },
+        { p1: 1, p0: 1 },
+      ],
+    },
     { kind: 'toggle', input: 'p1', label: 'P1' },
     { kind: 'toggle', input: 'p0', label: 'P0' },
   ],
   hints: [
-    'Take one lamp at a time. For 2X, write down what P1 and P0 are doing: one of them is 1, the other is 0.',
-    '4X is the easy one - both digits are 1. For 2X you need "P0 is 1 and P1 is NOT", and 3X is that idea mirrored.',
-    'Invert P1 and invert P0 once each, then feed the three ANDs: (NOT P1, P0) for 2X, (P1, NOT P0) for 3X, (P1, P0) for 4X.',
+    'Do one lamp at a time. For 2X, write down P1 and P0. One of them is 1, and the other is 0.',
+    '4X is the easy lamp: both digits are 1, so one AND gate is enough. 2X needs P0 = 1 and P1 = 0. 3X needs P1 = 1 and P0 = 0.',
+    'Use one INVERT on P1 and one INVERT on P0. Then three AND gates: NOT P1 with P0 goes to 2X, P1 with NOT P0 goes to 3X, and P1 with P0 goes to 4X.',
   ],
   teacher: {
-    answer: '2X = NOT P1 AND P0; 3X = P1 AND NOT P0; 4X = P1 AND P0. A 1-of-n decoder built from minterms.',
+    answer: '2X is NOT P1 AND P0. 3X is P1 AND NOT P0. 4X is P1 AND P0. Invert each digit once, then use three AND gates.',
     nandgame: 'And / Invert (composition)',
     vocab: ['decoder', 'minterm', 'binary position'],
   },

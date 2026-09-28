@@ -58,7 +58,7 @@ export function createPulse(level, { repeat = true } = {}) {
         heldSince = now;
       }
     },
-    /** 0..1 position of the travelling dots. */
+    /** 0..1 position of the traveling dots. */
     dotPhase(time) {
       return (time % DOT_MS) / DOT_MS;
     },

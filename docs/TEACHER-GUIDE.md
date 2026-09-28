@@ -4,10 +4,10 @@
 > `src/levels/`, not this file.
 
 GATECRASHER hands a student an almost-finished pinball machine. Thirteen of its
-features are dead, and each one comes alive when the student builds the logic
-circuit behind it out of NAND, INVERT, AND, OR and XOR gates. The machine is the
-feedback: a wrong circuit means the flipper does not move, the bumper fires when
-nobody is playing, or the lamp forgets it was ever lit.
+features do not work yet. Each one starts working when the student builds the
+logic circuit behind it from NAND, INVERT, AND, OR, and XOR gates. The machine
+shows the result: a wrong circuit means the flipper does not move, the bumper
+fires when nobody is playing, or the lamp turns off as soon as the switch opens.
 
 ## What students need first
 
@@ -43,13 +43,13 @@ difficulty.
 
 | Act | Levels | What is new | Roughly |
 | --- | --- | --- | --- |
-| 1. Wake It Up | 1-3 | One gate, one socket, wiring already done | A short first sitting |
-| 2. Rules Take Shape | 4-6 | Two or three gates, then the student wires it, then free placement | One sitting |
-| 3. Make Do | 7-9 | Build AND and INVERT out of NANDs; several outputs at once | One sitting |
-| 4. The Machine Remembers | 10-13 | Feedback, latches, stored state | Two sittings |
+| 1. First Gates | 1-3 | One gate, one socket, wiring already done | A short first sitting |
+| 2. Gates Together | 4-6 | Two or three gates, then the student connects the wires, then free placement | One sitting |
+| 3. NAND Only | 7-9 | Build AND and INVERT from NAND gates; several outputs at once | One sitting |
+| 4. Memory Circuits | 10-13 | Feedback, memory circuits, stored state | Two sittings |
 
-After level 13, Free Play turns the machine loose: a ball runs the playfield and
-every circuit the student built drives it at once. It is worth projecting.
+After level 13, Free Play runs the machine on its own. A ball moves around the
+playfield, and every circuit the student built controls it. It is worth projecting.
 
 ## Things worth stopping the class for
 
@@ -67,8 +67,8 @@ every circuit the student built drives it at once. It is worth projecting.
   both lamps on, which is impossible for a real lane change. Let them find it.
 - **Why a latch is refused earlier.** Combinational levels are checked from both
   a LOW and a HIGH power-up, so a circuit that remembers anything is rejected
-  with "this circuit remembers things it should not". That is not a bug to work
-  around; it is the definition of combinational.
+  with "This circuit remembers an old value." That is not a bug to work around.
+  It is the definition of a circuit that should depend only on the inputs.
 
 ## How the game supports a stuck student
 
@@ -78,23 +78,23 @@ every circuit the student built drives it at once. It is worth projecting.
   three failed checks in a row moves the ladder along.
 - A failed check names the exact case that breaks, and offers to set the test
   switches to that case so the student can watch it happen.
-- Nothing is ever solved for them, and nothing is penalised. Hint use is stored
+- Nothing is ever solved for them, and nothing is penalized. Hint use is stored
   per level if you want to look at it.
 
 ## Answer key
 
-## Act 1. Wake It Up
+## Act 1. First Gates
 
-_One gate, one socket._
+_One gate. The wires are already connected._
 
 ### 1. Flipper Live
 
-**What comes alive:** Make the left flipper coil fire while the button is held.
+**The job:** Make the left flipper move while the left button is held down.
 
 **Parts bin:** 1 x INVERT  
 **Bench:** gates drop into fixed sockets, wiring already done
 
-**Answer:** One INV between the button and the coil. The switch is active-low, so the signal has to be flipped.
+**Answer:** One INVERT gate sits between the button and the coil. Pressing the button sends 0, and INVERT turns that 0 into 1, so the coil turns on.
 
 **Follows NANDGAME:** Invert  
 **Vocabulary:** active low, inverter
@@ -110,20 +110,20 @@ _One gate, one socket._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Hold the test button and watch the number leaving the LEFT BUTTON terminal. Is that what the coil wants?
-2. Pressing sends 0. The coil fires on 1. You need a part that flips a signal to its opposite.
-3. Drag the INVERT gate out of the parts bin and drop it into the empty socket.
+1. Hold the test button. Watch the number on LEFT BUTTON. Then look at what LEFT FLIPPER COIL needs in order to turn on.
+2. Pressing the button sends 0. The coil turns on when it gets 1. You need a gate that swaps 0 and 1.
+3. Drag the INVERT gate from the parts bin into the empty socket.
 
 </details>
 
 ### 2. Pop Bumper
 
-**What comes alive:** Fire the pop bumper only when the ball hits it during a game.
+**The job:** Fire the pop bumper only when a ball hits it during a game.
 
 **Parts bin:** 1 x AND  
 **Bench:** gates drop into fixed sockets, wiring already done
 
-**Answer:** One AND. Output 1 only for skirt=1 and gameOn=1.
+**Answer:** One AND gate. The coil is 1 only when the skirt is 1 and GAME ON is 1.
 
 **Follows NANDGAME:** And  
 **Vocabulary:** AND, conjunction
@@ -141,27 +141,27 @@ _One gate, one socket._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Try the skirt with the game relay on, then switch the relay off and hit it again. What should be different?
-2. The coil should fire when the skirt is hit AND the game is running - not for either one on its own.
-3. Drop the AND gate into the socket. Both leads already run to its input pins.
+1. Tap the bumper with the Game button on. Then turn Game off and tap the bumper again. The coil should fire only the first time.
+2. The coil turns on only when both inputs are 1: the skirt is hit, and the game is running.
+3. Put the AND gate in the socket. The wires to its two inputs are already connected.
 
 </details>
 
 ### 3. Slingshot
 
-**What comes alive:** Kick the ball back when the ball touches either blade switch.
+**The job:** Kick the ball when it touches the upper switch or the lower switch.
 
 **Parts bin:** 1 x OR  
 **Bench:** gates drop into fixed sockets, wiring already done
 
-**Answer:** One OR. Only blade=0,0 leaves the coil off.
+**Answer:** One OR gate. The coil is 1 when either switch is 1. It is 0 only when both switches are 0.
 
 **Follows NANDGAME:** Or  
 **Vocabulary:** OR, disjunction
 
 <details><summary>Truth table the game checks</summary>
 
-| UP | LOW | COIL |
+| UP | LWR | COIL |
 | --- | --- | --- |
 | 0 | 0 | 0 |
 | 0 | 1 | 1 |
@@ -172,24 +172,24 @@ _One gate, one socket._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Last level needed both inputs to be 1. This one is the other way round.
-2. Upper blade on its own should kick. Lower blade on its own should kick. Both at once should still kick.
-3. The OR gate is the one that answers 1 when either input is 1. Drop it in the socket.
+1. On the last level, both inputs had to be 1. Here, either input is enough.
+2. The upper switch alone should kick. The lower switch alone should kick. Both switches at once should still kick.
+3. Put the OR gate in the socket. OR outputs 1 when at least one input is 1.
 
 </details>
 
-## Act 2. Rules Take Shape
+## Act 2. Gates Together
 
-_Gates working together._
+_Use more than one gate, then connect the wires yourself._
 
 ### 4. Tilt Guard
 
-**What comes alive:** The right flipper fires when the button is held, unless the machine is tilted.
+**The job:** The right flipper works when its button is held, unless the machine is tilted.
 
 **Parts bin:** 1 x INVERT, 1 x AND  
 **Bench:** gates drop into fixed sockets, wiring already done
 
-**Answer:** INV on the tilt line, then AND with the button. coil = button AND (NOT tilt).
+**Answer:** INVERT the tilt wire, then AND that result with the button. The coil is 1 only when the button is 1 and tilt is 0.
 
 **Follows NANDGAME:** And / Invert  
 **Vocabulary:** negation, guard condition
@@ -207,20 +207,20 @@ _Gates working together._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. The coil wants 1 when the button is 1 and the tilt line is 0. Only one of your two gates can change a 0 into a 1.
-2. The tilt line has to be turned upside down before it is any use to an AND gate.
-3. INVERT goes in the socket with a single lead coming in. AND goes in the socket with two.
+1. The coil should be 1 when the button is 1 and TILT is 0. Only one of your two gates can turn a 0 into a 1.
+2. Turn the tilt signal into its opposite before it reaches the AND gate. Then AND can check "button is on" and "tilt is off" together.
+3. Put INVERT in the socket with one wire coming in. Put AND in the socket with two wires coming in.
 
 </details>
 
 ### 5. Drop Target Bank
 
-**What comes alive:** Open the diverter and light the jackpot only when all four targets are down.
+**The job:** Open the diverter and light the jackpot only when all four targets are down.
 
 **Parts bin:** 3 x AND  
 **Bench:** gates drop into fixed sockets, student draws the wiring
 
-**Answer:** AND(AND(G, A), AND(T, E)), fanned out to both outputs. Pair the targets, then AND the pairs.
+**Answer:** AND targets G and A. AND targets T and E. AND those two results, and connect that output to both the diverter coil and the jackpot lamp.
 
 **Follows NANDGAME:** And (chained)  
 **Vocabulary:** fan-out, chaining gates
@@ -250,20 +250,20 @@ _Gates working together._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. An AND gate only takes two inputs, and you have four targets. Two sockets already have a pair wired in. Each of those answers "are both of mine down?" What do you do with the two answers?
-2. The empty socket is the last AND. Feed it the output of the G-and-A gate and the output of the T-and-E gate. That answer is "are all four down?"
-3. Wire s1 output to one pin on s3, and s2 output to the other pin. Then run s3 output to BOTH the diverter coil and the jackpot lamp.
+1. An AND gate has only two inputs, and you have four targets. Each left socket checks one pair: G with A, and T with E. You still need to check that both pairs are down.
+2. Put an AND gate in the empty socket. Connect the G-and-A output to one of its inputs, and the T-and-E output to the other. That output is 1 only when all four targets are down.
+3. Connect that last AND output to both DIVERTER COIL and JACKPOT LAMP. One output pin can have two wires.
 
 </details>
 
 ### 6. Mystery Award
 
-**What comes alive:** MYSTERY lights when exactly one ramp is made. The gate wheel spins when both are.
+**The job:** Light MYSTERY when exactly one ramp is made. Spin the gate wheel when both ramps are made.
 
 **Parts bin:** 1 x XOR, 1 x AND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** lampMystery = XOR(left, right); motorSpinner = AND(left, right). Both inputs fan out to two gates.
+**Answer:** XOR of the two ramps goes to the mystery lamp. AND of the two ramps goes to the gate wheel. Both ramp wires connect to both gates.
 
 **Follows NANDGAME:** Xor  
 **Vocabulary:** exclusive or, fan-out
@@ -281,24 +281,24 @@ _Gates working together._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. "Exactly one" means the two ramps disagree. Which gate in the bin answers 1 only when its inputs are different?
-2. XOR handles the mystery lamp. The gate wheel is the plain "both of them" question you already solved on the pop bumper.
-3. Both ramp terminals feed both gates: left and right into XOR, left and right into AND. Four wires in, two wires out.
+1. Look at the two outputs separately. MYSTERY is on when the ramps are different. The wheel is on when both ramps are 1.
+2. XOR outputs 1 only when its two inputs are different. Use XOR for the mystery lamp. Use AND for the wheel. AND is the same "both must be 1" rule as the pop bumper.
+3. Connect both ramp inputs to the XOR gate, and both ramp inputs to the AND gate. Then connect XOR to MYSTERY LAMP and AND to GATE WHEEL.
 
 </details>
 
-## Act 3. Make Do
+## Act 3. NAND Only
 
-_Build it from what is in the crate._
+_Build the gates you need from NAND gates._
 
 ### 7. Parts Shortage
 
-**What comes alive:** Fire the upper pop bumper when its skirt is hit, unless the machine is tilted - using only NANDs.
+**The job:** Fire the upper pop bumper when its skirt is hit, unless the machine is tilted. Use only NAND gates.
 
 **Parts bin:** 3 x NAND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** g1 = NAND(tilt,tilt) = NOT tilt. g2 = NAND(skirt, g1). g3 = NAND(g2,g2) = skirt AND NOT tilt.
+**Answer:** Three NAND gates. NAND with tilt on both inputs makes NOT tilt. NAND of the skirt and NOT tilt is the answer flipped. A third NAND with that signal on both inputs flips it back.
 
 **Follows NANDGAME:** Invert / And built from NAND  
 **Vocabulary:** universal gate, De Morgan
@@ -316,20 +316,20 @@ _Build it from what is in the crate._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Feed the same signal into both pins of one NAND and watch what comes out. That is one of your missing parts, for free.
-2. NAND is AND with its answer flipped. So build the NAND of what you want, then flip it back with a second NAND wired as an inverter.
-3. Three gates: NAND(tilt, tilt) makes NOT tilt. NAND(skirt, NOT tilt) is almost the answer but upside down. A third NAND with that signal on both pins turns it the right way up.
+1. Connect the tilt wire to both inputs of one NAND gate. Watch the output. It is the opposite of tilt.
+2. NAND is AND with the answer flipped. Build the condition you want, then flip the answer back with another NAND used as an INVERT.
+3. Use three NAND gates. The first gets tilt on both inputs, so its output is NOT tilt. The second gets the skirt and that NOT tilt. That output is the opposite of what the coil needs. The third gets that output on both inputs, which flips it to the right answer. Connect the third output to the coil.
 
 </details>
 
 ### 8. Bonus Multiplier
 
-**What comes alive:** Light 2X at position 01, 3X at position 10, 4X at position 11. At 00 all three stay dark.
+**The job:** Light 2X at position 01, 3X at position 10, and 4X at position 11. At 00, all three lamps stay off.
 
 **Parts bin:** 2 x INVERT, 3 x AND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** 2X = NOT P1 AND P0; 3X = P1 AND NOT P0; 4X = P1 AND P0. A 1-of-n decoder built from minterms.
+**Answer:** 2X is NOT P1 AND P0. 3X is P1 AND NOT P0. 4X is P1 AND P0. Invert each digit once, then use three AND gates.
 
 **Follows NANDGAME:** And / Invert (composition)  
 **Vocabulary:** decoder, minterm, binary position
@@ -347,20 +347,20 @@ _Build it from what is in the crate._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Take one lamp at a time. For 2X, write down what P1 and P0 are doing: one of them is 1, the other is 0.
-2. 4X is the easy one - both digits are 1. For 2X you need "P0 is 1 and P1 is NOT", and 3X is that idea mirrored.
-3. Invert P1 and invert P0 once each, then feed the three ANDs: (NOT P1, P0) for 2X, (P1, NOT P0) for 3X, (P1, P0) for 4X.
+1. Do one lamp at a time. For 2X, write down P1 and P0. One of them is 1, and the other is 0.
+2. 4X is the easy lamp: both digits are 1, so one AND gate is enough. 2X needs P0 = 1 and P1 = 0. 3X needs P1 = 1 and P0 = 0.
+3. Use one INVERT on P1 and one INVERT on P0. Then three AND gates: NOT P1 with P0 goes to 2X, P1 with NOT P0 goes to 3X, and P1 with P0 goes to 4X.
 
 </details>
 
 ### 9. Kickback
 
-**What comes alive:** Kick the ball back when it rolls through the outlane while the kickback is armed and the machine is not tilted. The ARMED lamp shows whether a save is live right now.
+**The job:** Kick the ball back when it rolls through the outlane, but only if the kickback is armed and the machine is not tilted. The ARMED lamp shows when a save is ready.
 
 **Parts bin:** 2 x INVERT, 3 x AND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** lampArmed = AND(armed, NOT tilt); kickCoil = AND(outlane, lampArmed). Three gates; the shared term is the point.
+**Answer:** The lamp is armed AND NOT tilt. The coil is the outlane switch AND that same lamp signal. Reuse the lamp output so the lamp and the coil cannot disagree.
 
 **Follows NANDGAME:** And / Invert (composition)  
 **Vocabulary:** shared subexpression, three-input condition
@@ -382,24 +382,24 @@ _Build it from what is in the crate._
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Start with the lamp - it only cares about two of the three inputs. Build that first and test it.
-2. The coil is the lamp's question plus one more: is the ball in the outlane right now?
-3. Invert tilt. AND that with armed and send it to the ARMED lamp. Then AND that same signal with the outlane switch for the coil.
+1. Build the lamp first. It uses only two inputs: kickback armed is 1, and tilt is 0. Test the lamp before you add the coil.
+2. The coil uses the lamp signal plus one more check: is the ball in the outlane right now?
+3. INVERT the tilt signal. AND that with the armed signal, and connect that output to ARMED LAMP. Then AND that same output with the outlane switch, and connect it to KICKBACK COIL.
 
 </details>
 
-## Act 4. The Machine Remembers
+## Act 4. Memory Circuits
 
-_Circuits that hold a value._
+_The output stays on after the switch opens._
 
 ### 10. Lock 1
 
-**What comes alive:** LOCK 1 lights when the lock switch closes, stays lit after it opens, and goes out only when the machine sends its reset.
+**The job:** Turn LOCK 1 on when the lock switch closes. Keep it on after the switch opens. Turn it off only when reset happens.
 
 **Parts bin:** 2 x NAND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** Cross-coupled NAND latch. Q = g1 = NAND(set-bar, Qbar); Qbar = g2 = NAND(reset-bar, Q). Lamp on Q.
+**Answer:** Two NAND gates wired to each other. The lock switch goes into the first NAND, and the lamp connects to that output. Reset goes into the second NAND. Each output feeds the other gate, so the lamp stays on after the switch opens.
 
 **Follows NANDGAME:** Latch (the unit after logic gates)  
 **Vocabulary:** feedback, latch, set/reset, state
@@ -407,33 +407,33 @@ _Circuits that hold a value._
 <details><summary>Test sequence the game runs</summary>
 
 1. **a ball gets locked and stays locked**
-   - the machine resets at the start of the ball -> LOCK 1 LAMP = 0
-   - the reset line lets go -> LOCK 1 LAMP = 0
-   - the ball hits the lock switch -> LOCK 1 LAMP = 1
-   - the ball rolls off the switch -> LOCK 1 LAMP = 1
-   - a second hit on the same switch -> LOCK 1 LAMP = 1
-   - and off again -> LOCK 1 LAMP = 1
-   - the next ball starts -> LOCK 1 LAMP = 0
-   - and the lamp stays out -> LOCK 1 LAMP = 0
+   - Reset at the start of the ball -> LOCK 1 LAMP = 0
+   - Reset turns off again -> LOCK 1 LAMP = 0
+   - The ball hits the lock switch -> LOCK 1 LAMP = 1
+   - The ball rolls off the switch -> LOCK 1 LAMP = 1
+   - The ball hits the same switch again -> LOCK 1 LAMP = 1
+   - The switch opens again -> LOCK 1 LAMP = 1
+   - The next ball starts -> LOCK 1 LAMP = 0
+   - Reset turns off, and the lamp stays off -> LOCK 1 LAMP = 0
 
 </details>
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. A signal cannot be remembered by a gate that only looks forward. What if a gate could see its own answer coming back around?
-2. Take the output of one NAND into an input of the other, and that second output back into the first. The lock switch feeds the first gate's free pin, the reset line feeds the second.
-3. g1 = NAND(lock switch, g2 output). g2 = NAND(reset line, g1 output). The lamp hangs off g1. Pulse reset first to start the lamp off.
+1. A gate that only watches the switch will forget as soon as the switch goes back to 1. To remember, a gate has to see an output coming back in.
+2. Cross the wires. Connect the first NAND output to an input of the second NAND, and the second output back to an input of the first. The lock switch goes to the first gate. Reset goes to the second gate.
+3. Connect the lamp to the NAND that also gets the lock switch. Tap Reset first so the lamp starts off. Then tap the lock switch. The lamp should stay on after the switch opens.
 
 </details>
 
 ### 11. Ball Saver
 
-**What comes alive:** Arm the save when the ball leaves the shooter lane. Hold it until end of ball. While it is armed, a drain should fire the auto-launch coil.
+**The job:** Turn the save on when the ball leaves the shooter lane. Keep it on until the ball ends. While it is on, a drain fires the auto-launch coil.
 
 **Parts bin:** 2 x NAND, 1 x INVERT, 1 x AND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** Latch set by launch, reset by endOfBall. lampSave = Q. coilAuto = AND(Q, INV(drain)).
+**Answer:** Same two-NAND memory as Lock 1. The shooter lane sets it, and end of ball clears it. The lamp connects to that memory. The coil is the memory AND NOT the outhole wire, because the outhole is 0 when the ball is in it.
 
 **Follows NANDGAME:** Latch + And  
 **Vocabulary:** state, gated output, active low
@@ -441,40 +441,40 @@ _Circuits that hold a value._
 <details><summary>Test sequence the game runs</summary>
 
 1. **an early drain gets saved**
-   - the machine sets up for a new ball -> BALL SAVE LAMP = 0, AUTO LAUNCH COIL = 0
-   - the reset lets go -> BALL SAVE LAMP = 0, AUTO LAUNCH COIL = 0
-   - the ball rolls out of the shooter lane -> BALL SAVE LAMP = 1
-   - the shooter lane switch opens again -> BALL SAVE LAMP = 1
-   - the ball drains almost immediately -> BALL SAVE LAMP = 1, AUTO LAUNCH COIL = 1
-   - the outhole clears -> BALL SAVE LAMP = 1, AUTO LAUNCH COIL = 0
+   - The machine sets up a new ball -> BALL SAVE LAMP = 0, AUTO LAUNCH = 0
+   - End of ball turns off again -> BALL SAVE LAMP = 0, AUTO LAUNCH = 0
+   - The ball leaves the shooter lane -> BALL SAVE LAMP = 1
+   - The shooter lane switch opens again -> BALL SAVE LAMP = 1
+   - The ball drains right away -> BALL SAVE LAMP = 1, AUTO LAUNCH = 1
+   - The outhole is empty again -> BALL SAVE LAMP = 1, AUTO LAUNCH = 0
 1. **a drain with no save armed**
-   - new ball -> BALL SAVE LAMP = 0
-   - next step -> BALL SAVE LAMP = 0
-   - ball launched -> BALL SAVE LAMP = 1
-   - next step -> BALL SAVE LAMP = 1
-   - the save time runs out and the ball ends -> BALL SAVE LAMP = 0
-   - next step -> BALL SAVE LAMP = 0
-   - a later drain, with nothing armed -> BALL SAVE LAMP = 0, AUTO LAUNCH COIL = 0
-   - next step -> AUTO LAUNCH COIL = 0
+   - A new ball starts -> BALL SAVE LAMP = 0
+   - End of ball turns off again -> BALL SAVE LAMP = 0
+   - The ball is launched -> BALL SAVE LAMP = 1
+   - The shooter lane switch opens -> BALL SAVE LAMP = 1
+   - The save time runs out and the ball ends -> BALL SAVE LAMP = 0
+   - End of ball turns off, and the lamp stays off -> BALL SAVE LAMP = 0
+   - A later drain, with the save off -> BALL SAVE LAMP = 0, AUTO LAUNCH = 0
+   - The outhole is empty, and the coil stays off -> AUTO LAUNCH = 0
 
 </details>
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. You already know how to build the memory. Which line should set it, and which should clear it?
-2. The latch goes between the shooter lane switch and the end of ball line. The lamp comes straight off it.
-3. The coil is an AND: the stored bit, and "is the ball in the outhole right now". The outhole line reads 0 when the ball is there, so it needs inverting first.
+1. Start with the same memory circuit as Lock 1. Decide which input turns the memory on, and which input turns it off.
+2. The shooter lane turns the memory on. End of ball turns it off. Connect BALL SAVE LAMP to the memory output.
+3. The coil is an AND of two things: the saved value, and "the ball is in the outhole right now." The outhole wire is 0 when the ball is there, so put an INVERT on it before the AND gate.
 
 </details>
 
 ### 12. Lane Change
 
-**What comes alive:** Lane A lights when the left button is pressed, lane B when the right button is pressed, the choice holds after the button is released, and a tilted machine ignores both buttons.
+**The job:** Light lane A when the left button is pressed, and lane B when the right button is pressed. Keep that choice after the button is released. Ignore both buttons while the machine is tilted.
 
 **Parts bin:** 4 x NAND, 1 x INVERT  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** INV(tilt) gates both button lines through NANDs into a NAND latch. Lamps take Q and Qbar - the latch already produces both. Pressing both buttons at once drives the illegal state where both lamps light; worth demonstrating.
+**Answer:** INVERT tilt once. Each button goes through a NAND with "not tilted," so tilt blocks both buttons. Those two outputs feed a memory pair, like Lock 1. Lane A connects to one memory output. Lane B connects to the other, which is always the opposite.
 
 **Follows NANDGAME:** Latch (set/reset inputs)  
 **Vocabulary:** complementary outputs, Q and Q-bar, illegal state
@@ -482,34 +482,34 @@ _Circuits that hold a value._
 <details><summary>Test sequence the game runs</summary>
 
 1. **the player changes lanes**
-   - the player taps the left button -> LANE A LAMP = 1, LANE B LAMP = 0
-   - released, and lane A stays chosen -> LANE A LAMP = 1, LANE B LAMP = 0
-   - now the right button -> LANE A LAMP = 0, LANE B LAMP = 1
-   - released, and lane B stays chosen -> LANE A LAMP = 0, LANE B LAMP = 1
-   - somebody shoves the machine -> LANE A LAMP = 0, LANE B LAMP = 1
-   - left button while tilted, which must do nothing -> LANE A LAMP = 0, LANE B LAMP = 1
-   - the tilt clears -> LANE A LAMP = 0, LANE B LAMP = 1
-   - and the left button works again -> LANE A LAMP = 1, LANE B LAMP = 0
-   - released -> LANE A LAMP = 1, LANE B LAMP = 0
+   - The player presses the left button -> LANE A LAMP = 1, LANE B LAMP = 0
+   - The left button is released, and lane A stays on -> LANE A LAMP = 1, LANE B LAMP = 0
+   - The player presses the right button -> LANE A LAMP = 0, LANE B LAMP = 1
+   - The right button is released, and lane B stays on -> LANE A LAMP = 0, LANE B LAMP = 1
+   - The machine is tilted -> LANE A LAMP = 0, LANE B LAMP = 1
+   - The left button is pressed while tilted, so nothing changes -> LANE A LAMP = 0, LANE B LAMP = 1
+   - Tilt turns off -> LANE A LAMP = 0, LANE B LAMP = 1
+   - The left button works again -> LANE A LAMP = 1, LANE B LAMP = 0
+   - The left button is released, and lane A stays on -> LANE A LAMP = 1, LANE B LAMP = 0
 
 </details>
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. The buttons read 1 when pressed, but the latch you built wants a 0 to set it. What do you have that turns a 1 into a 0 - and can check the tilt at the same time?
-2. Put a NAND in front of each side of the latch: one takes the left button, one takes the right, and both take "the machine is not tilted". While tilted, both of those NANDs sit at 1 and the latch cannot move.
-3. Invert tilt once. g2 = NAND(left button, not-tilt) feeds the latch's set side, g3 = NAND(right button, not-tilt) feeds its reset side. Lane A comes off the latch gate fed by g2, lane B off the other one.
+1. The buttons send 1 when pressed. The memory circuit from Lock 1 changes when an input drops to 0. You also have to block both buttons while tilt is 1.
+2. Put a NAND in front of each side of the memory circuit. One NAND gets the left button. The other gets the right button. Both also get "not tilted." While the machine is tilted, those NAND outputs stay at 1, so the memory cannot change.
+3. INVERT tilt once, and connect that output to both front NAND gates. The left NAND output goes into one side of the memory. The right NAND output goes into the other side. Lane A connects to the memory gate fed by the left button. Lane B connects to the other memory gate.
 
 </details>
 
-### 13. MULTIBALL
+### 13. Multiball
 
-**What comes alive:** Each lock lamp lights on its own switch and holds. When all three are lit, fire the ball release. The reset line clears all three.
+**The job:** Each lock lamp turns on from its own switch and stays on. When all three lamps are on, fire the ball release. Reset turns all three lamps off.
 
 **Parts bin:** 6 x NAND, 2 x AND  
 **Bench:** gates go anywhere, student draws the wiring
 
-**Answer:** Three cross-coupled NAND latches sharing one reset line, then AND(AND(Q1,Q2),Q3) into the release coil.
+**Answer:** Three copies of the Lock 1 memory, all using the same reset wire. AND the first two lamp signals, then AND that result with the third. That output goes to the ball release.
 
 **Follows NANDGAME:** Latch (x3) + And  
 **Vocabulary:** register, shared reset, composition
@@ -517,24 +517,24 @@ _Circuits that hold a value._
 <details><summary>Test sequence the game runs</summary>
 
 1. **three locks and a release**
-   - the machine resets for a new game -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
-   - reset lets go -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
-   - the first ball is locked -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
-   - the switch opens and lock 1 holds -> LOCK 1 LAMP = 1, BALL RELEASE = 0
-   - the player locks number 3 out of order -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 0, LOCK 3 LAMP = 1, BALL RELEASE = 0
-   - and that holds too -> LOCK 3 LAMP = 1, BALL RELEASE = 0
-   - all three locked, so the balls release -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 1, LOCK 3 LAMP = 1, BALL RELEASE = 1
-   - and the release stays on while the locks hold -> BALL RELEASE = 1
-   - game over, everything clears -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
-   - and stays clear -> BALL RELEASE = 0
+   - Reset for a new game -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
+   - Reset turns off again -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
+   - The first ball is locked -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
+   - Lock 1 opens, and the lamp stays on -> LOCK 1 LAMP = 1, BALL RELEASE = 0
+   - Lock 3 is hit before lock 2 -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 0, LOCK 3 LAMP = 1, BALL RELEASE = 0
+   - Lock 3 opens, and that lamp stays on -> LOCK 3 LAMP = 1, BALL RELEASE = 0
+   - All three locks are on, so the balls release -> LOCK 1 LAMP = 1, LOCK 2 LAMP = 1, LOCK 3 LAMP = 1, BALL RELEASE = 1
+   - Lock 2 opens, and the release stays on -> BALL RELEASE = 1
+   - The game ends, and everything turns off -> LOCK 1 LAMP = 0, LOCK 2 LAMP = 0, LOCK 3 LAMP = 0, BALL RELEASE = 0
+   - Reset turns off, and the release stays off -> BALL RELEASE = 0
 
 </details>
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. Build one lock and get it working before you place a single gate for the other two. Then copy it twice.
-2. All three latches share the same reset line. One output pin can feed as many wires as you need - you already did that on the drop targets.
-3. Three latches of two NANDs each. Then AND the first two stored bits together, and AND that answer with the third, straight into the ball release.
+1. Build one lock and test it before you add the other two. Then copy that circuit two more times.
+2. All three memory circuits use the same reset wire. Connect that one reset pin to each circuit. You already connected one output to two places on the drop-target level.
+3. Each lock is two NAND gates, like Lock 1. Then AND the first two lamp signals together. AND that result with the third lamp signal. Connect that last output to BALL RELEASE.
 
 </details>
 

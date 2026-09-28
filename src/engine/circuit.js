@@ -179,19 +179,19 @@ export class Circuit {
         return { ok: false, reason: 'A wire has to end at an input pin.' };
       }
       if (from.node === to.node) {
-        return { ok: false, reason: 'A gate cannot feed itself directly.' };
+        return { ok: false, reason: 'A gate cannot connect directly to itself.' };
       }
       const existing = this.wires.find(
         (w) => endpointKey(w.from) === endpointKey(from) && endpointKey(w.to) === endpointKey(to)
       );
-      if (existing) return { ok: false, reason: 'Those pins are already connected.' };
+      if (existing) return { ok: false, reason: 'Those two pins are already connected.' };
     }
 
     // One driver per input pin: a new wire replaces whatever was there.
     const occupied = this.wireInto(to);
     if (occupied) {
       if (occupied.fixed && !fixed) {
-        return { ok: false, reason: 'That input is already wired by the machine.' };
+        return { ok: false, reason: 'That input already has a wire from the machine. You cannot replace it.' };
       }
       this.wires = this.wires.filter((w) => w !== occupied);
     }

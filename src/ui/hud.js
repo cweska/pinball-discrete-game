@@ -88,7 +88,7 @@ export function createHud(refs) {
   nextButton.addEventListener('click', () => onSignalStep?.(1));
   repeatButton.addEventListener('click', () => onSignalRepeat?.());
   refs.signalTesting.append(
-    h('span', { class: 'signal-test__label', text: 'Signal Testing:' }),
+    h('span', { class: 'signal-test__label', text: 'Try inputs:' }),
     backButton,
     nextButton,
     repeatButton,
@@ -102,13 +102,13 @@ export function createHud(refs) {
       class: 'briefing__toggle',
       type: 'button',
       'aria-expanded': tableOpen ? 'true' : 'false',
-      text: tableOpen ? 'Hide what it has to do' : 'Show exactly what it has to do',
+      text: tableOpen ? 'Hide every case' : 'Show every case',
     });
     const tableWrap = h('div', { class: 'briefing__table', hidden: !tableOpen }, table);
     toggle.addEventListener('click', () => {
       tableOpen = !tableOpen;
       tableWrap.hidden = !tableOpen;
-      toggle.textContent = tableOpen ? 'Hide what it has to do' : 'Show exactly what it has to do';
+      toggle.textContent = tableOpen ? 'Hide every case' : 'Show every case';
       toggle.setAttribute('aria-expanded', tableOpen ? 'true' : 'false');
     });
 
@@ -139,8 +139,8 @@ export function createHud(refs) {
       this.clearHint();
       this.setStatus(
         level.placement === 'slots'
-          ? 'Take a gate from the parts bin and drop it into a socket.'
-          : 'Drag gates onto the bench, then draw wires from pin to pin.',
+          ? 'Drag a gate from the parts bin into a socket.'
+          : 'Drag gates onto the bench. Then connect an output pin to an input pin.',
         'info'
       );
     },
@@ -162,7 +162,7 @@ export function createHud(refs) {
       refs.hint.append(
         h('div', { class: 'hint__head' },
           h('span', { class: 'hint__tier', text: TIER_LABELS[tier] || 'Hint' }),
-          h('span', { class: 'hint__count', text: `hint ${tier} of ${total}` })
+          h('span', { class: 'hint__count', text: `${tier} of ${total}` })
         ),
         h('p', { class: 'hint__text', text })
       );
@@ -181,19 +181,17 @@ export function createHud(refs) {
     setSignalTesting({ index, total, bits, repeat, paused }) {
       signalCount.textContent = `${index + 1}/${total}`;
       signalBits.textContent = bits;
-      signalReadout.title = paused ? `Test controls have the switches. Next up: ${bits}` : bits;
+      signalReadout.title = paused ? `The test buttons have the switches. Next combination: ${bits}` : bits;
       repeatButton.setAttribute('aria-pressed', repeat ? 'true' : 'false');
-      repeatButton.title = repeat
-        ? 'Stop on this combination'
-        : 'Cycle through every input combination';
+      repeatButton.title = repeat ? 'Stop on this case' : 'Keep going through every case';
       setClass(refs.signalTesting, 'is-paused', paused);
     },
 
     setProgress(solvedCount) {
       refs.progress.style.setProperty('--fill', `${(solvedCount / LEVELS.length) * 100}%`);
-      refs.progress.setAttribute('aria-label', `${solvedCount} of ${LEVELS.length} features wired`);
+      refs.progress.setAttribute('aria-label', `${solvedCount} of ${LEVELS.length} levels done`);
       clear(refs.progressLabel);
-      refs.progressLabel.append(h('span', { text: `${solvedCount}/${LEVELS.length} features alive` }));
+      refs.progressLabel.append(h('span', { text: `${solvedCount}/${LEVELS.length} levels done` }));
     },
   };
 }

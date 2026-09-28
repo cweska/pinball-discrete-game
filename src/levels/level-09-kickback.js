@@ -2,12 +2,12 @@ export default {
   id: 'kickback',
   act: 3,
   title: 'Kickback',
-  subtitle: 'Reuse what you already worked out.',
+  subtitle: 'Use one answer for two outputs.',
   brief: {
-    story:
-      'The left outlane is a death sentence without a kickback. Ours has a coil, a lane switch, and an ARMED lamp on the apron that is supposed to tell the player whether the save is live. The lamp and the coil must never disagree.',
-    goal: 'Kick the ball back when it rolls through the outlane while the kickback is armed and the machine is not tilted. The ARMED lamp shows whether a save is live right now.',
-    note: 'There are spare gates in the bin. The tidiest answer does not use all of them - one gate\'s output can answer two questions.',
+    story: 'A ball in the left outlane drains. The kickback should save it, but the coil and the ARMED lamp are not connected.',
+    goal: 'Kick the ball back when it rolls through the outlane, but only if the kickback is armed and the machine is not tilted. The ARMED lamp shows when a save is ready.',
+    note:
+      'The lamp and the coil have to agree about whether a save is ready. You do not need every gate in the bin. One gate output can go to two places.',
   },
   placement: 'free',
   wiring: 'student',
@@ -17,13 +17,13 @@ export default {
   ],
   io: {
     inputs: [
-      { id: 'outlane', label: 'LEFT OUTLANE', short: 'LANE', rest: 0, note: 'ball through = 1' },
-      { id: 'armed', label: 'KICKBACK RELAY', short: 'ARM', rest: 0, note: 'armed = 1' },
-      { id: 'tilt', label: 'TILT BOB', short: 'TILT', rest: 0, note: 'tilted = 1' },
+      { id: 'outlane', label: 'LEFT OUTLANE', short: 'LANE', rest: 0, note: 'ball = 1' },
+      { id: 'armed', label: 'KICKBACK ARMED', short: 'ARM', rest: 0, note: 'armed = 1' },
+      { id: 'tilt', label: 'TILT', short: 'TILT', rest: 0, note: 'tilted = 1' },
     ],
     outputs: [
-      { id: 'kickCoil', label: 'KICKBACK COIL', short: 'KICK' },
-      { id: 'lampArmed', label: 'ARMED LAMP', short: 'ARMED' },
+      { id: 'kickCoil', label: 'KICKBACK COIL', short: 'KICK', note: 'on = 1' },
+      { id: 'lampArmed', label: 'ARMED LAMP', short: 'ARMED', note: 'on = 1' },
     ],
   },
   slots: [],
@@ -57,17 +57,18 @@ export default {
     celebrate: 'kickSave',
   },
   testControls: [
-    { kind: 'tap', input: 'outlane', label: 'Ball: Left Outlane' },
-    { kind: 'toggle', input: 'armed', label: 'Kickback Relay' },
-    { kind: 'toggle', input: 'tilt', label: 'Tilt Bob' },
+    { kind: 'tap', input: 'outlane', label: 'Tap outlane' },
+    { kind: 'toggle', input: 'armed', label: 'Kickback' },
+    { kind: 'toggle', input: 'tilt', label: 'Tilt' },
   ],
   hints: [
-    'Start with the lamp - it only cares about two of the three inputs. Build that first and test it.',
-    'The coil is the lamp\'s question plus one more: is the ball in the outlane right now?',
-    'Invert tilt. AND that with armed and send it to the ARMED lamp. Then AND that same signal with the outlane switch for the coil.',
+    'Build the lamp first. It uses only two inputs: kickback armed is 1, and tilt is 0. Test the lamp before you add the coil.',
+    'The coil uses the lamp signal plus one more check: is the ball in the outlane right now?',
+    'INVERT the tilt signal. AND that with the armed signal, and connect that output to ARMED LAMP. Then AND that same output with the outlane switch, and connect it to KICKBACK COIL.',
   ],
   teacher: {
-    answer: 'lampArmed = AND(armed, NOT tilt); kickCoil = AND(outlane, lampArmed). Three gates; the shared term is the point.',
+    answer:
+      'The lamp is armed AND NOT tilt. The coil is the outlane switch AND that same lamp signal. Reuse the lamp output so the lamp and the coil cannot disagree.',
     nandgame: 'And / Invert (composition)',
     vocab: ['shared subexpression', 'three-input condition'],
   },

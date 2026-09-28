@@ -13,10 +13,10 @@ import level12 from './level-12-lane-change.js';
 import level13 from './level-13-multiball.js';
 
 export const ACTS = [
-  { act: 1, title: 'Wake It Up', blurb: 'One gate, one socket.' },
-  { act: 2, title: 'Rules Take Shape', blurb: 'Gates working together.' },
-  { act: 3, title: 'Make Do', blurb: 'Build it from what is in the crate.' },
-  { act: 4, title: 'The Machine Remembers', blurb: 'Circuits that hold a value.' },
+  { act: 1, title: 'First Gates', blurb: 'One gate. The wires are already connected.' },
+  { act: 2, title: 'Gates Together', blurb: 'Use more than one gate, then connect the wires yourself.' },
+  { act: 3, title: 'NAND Only', blurb: 'Build the gates you need from NAND gates.' },
+  { act: 4, title: 'Memory Circuits', blurb: 'The output stays on after the switch opens.' },
 ];
 
 export const LEVELS = [

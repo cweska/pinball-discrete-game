@@ -61,14 +61,14 @@ export function checkWiring(level, circuit) {
       return {
         ok: false,
         reason: 'incomplete',
-        message: 'The socket is empty. Drop a gate in first.',
+        message: 'The socket is empty. Put a gate in it first.',
         highlight: { node: slot.id },
       };
     }
   }
   for (const terminal of circuit.outputs) {
     if (!circuit.wireInto({ node: terminal.id, pin: 'in' })) {
-      return { ok: false, reason: 'incomplete', message: `${terminal.label} has no wire running to it yet.` };
+      return { ok: false, reason: 'incomplete', message: `${terminal.label} has no wire connected to it yet.` };
     }
   }
   for (const gate of circuit.gateList()) {
@@ -77,7 +77,7 @@ export function checkWiring(level, circuit) {
         return {
           ok: false,
           reason: 'incomplete',
-          message: `The ${gateDef(gate.type).label} gate has an input pin with nothing wired to it.`,
+          message: `The ${gateDef(gate.type).label} gate has an input pin with no wire.`,
           highlight: { node: gate.id, pin },
         };
       }
@@ -94,14 +94,14 @@ export function checkBudget(level, circuit) {
       return {
         ok: false,
         reason: 'budget',
-        message: `Only ${entry.count} ${gateDef(entry.type).label} gate${entry.count === 1 ? '' : 's'} available on this one.`,
+        message: `This level only has ${entry.count} ${gateDef(entry.type).label} gate${entry.count === 1 ? '' : 's'}.`,
       };
     }
   }
   const allowed = new Set((level.palette || []).map((entry) => entry.type));
   for (const gate of circuit.gateList()) {
     if (!gate.fixed && !allowed.has(gate.type)) {
-      return { ok: false, reason: 'budget', message: `${gateDef(gate.type).label} is not in the parts bin for this build.` };
+      return { ok: false, reason: 'budget', message: `${gateDef(gate.type).label} is not in the parts bin for this level.` };
     }
   }
   return { ok: true };
@@ -130,7 +130,7 @@ function validateTruthTable(level, circuit) {
       return {
         ok: false,
         reason: 'oscillating',
-        message: 'This circuit never settles down - a gate output is feeding back and flip-flopping forever.',
+        message: 'This circuit keeps changing and never settles. A gate output is wired back into the circuit, so it flips between 0 and 1 forever.',
         detail: { inputs },
       };
     }
@@ -139,7 +139,7 @@ function validateTruthTable(level, circuit) {
         ok: false,
         reason: 'unstable',
         message:
-          'This circuit remembers things it should not. The answer depends on what happened before instead of only on the inputs - look for an output wired back into its own chain.',
+          'This circuit remembers an old value. On this level, the outputs should depend only on the inputs you see now. Look for a wire going from a gate output back to an earlier input.',
         detail: { inputs },
       };
     }
@@ -148,7 +148,7 @@ function validateTruthTable(level, circuit) {
       return {
         ok: false,
         reason: 'mismatch',
-        message: `With ${describeInputs(level, inputs)}, ${label(level, wrong)} should be ${row.out[wrong] ? 1 : 0} but your circuit says ${runs[0].outputs[wrong]}.`,
+        message: `When ${describeInputs(level, inputs)}, ${label(level, wrong)} should be ${row.out[wrong] ? 1 : 0}, but your circuit has ${runs[0].outputs[wrong]}.`,
         detail: { inputs, expected: row.out, actual: runs[0].outputs, output: wrong },
       };
     }
@@ -169,7 +169,7 @@ function validateSequence(level, circuit) {
         return {
           ok: false,
           reason: 'oscillating',
-          message: `While ${step.note || scenario.name}, the circuit never settled - something is flip-flopping forever.`,
+          message: `${step.note || scenario.name}. The circuit keeps changing and never settles. A gate output is wired back into the circuit, so it flips between 0 and 1 forever.`,
           detail: { inputs, step: step.note, scenario: scenario.name },
         };
       }
@@ -178,7 +178,7 @@ function validateSequence(level, circuit) {
         return {
           ok: false,
           reason: 'mismatch',
-          message: `${step.note ? `${step.note}: ` : ''}${label(level, wrong)} should be ${step.expect[wrong] ? 1 : 0} but your circuit says ${result.outputs[wrong]}.`,
+          message: `${step.note ? `${step.note}. ` : ''}${label(level, wrong)} should be ${step.expect[wrong] ? 1 : 0}, but your circuit has ${result.outputs[wrong]}.`,
           detail: {
             inputs: { ...inputs },
             expected: step.expect,

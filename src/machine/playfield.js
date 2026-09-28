@@ -348,7 +348,7 @@ export function createMachine(root) {
       svg('defs', {}, reelWindowClip(clipId)),
       svg('rect', { class: 'bg-panel', x: 6, y: 6, width: 388, height: 138, rx: 10 }),
       svg('text', { class: 'bg-title', x: 200, y: 40, text: 'GATECRASHER' }),
-      svg('text', { class: 'bg-sub', x: 200, y: 58, text: 'LOGIC DIVISION \u00b7 MODEL NAND-8' })
+      svg('text', { class: 'bg-sub', x: 200, y: 58, text: 'CASTLE WORKS \u00b7 MODEL NAND-8' })
     );
     const reelRow = svg('g', { class: 'reels', transform: 'translate(120 92)' });
     for (let i = 0; i < 5; i++) {

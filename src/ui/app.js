@@ -58,8 +58,8 @@ export function createApp(refs) {
       if (armed) {
         hud.setStatus(
           level.placement === 'slots'
-            ? `Click the socket to drop the ${gateDef(armed).label} in. Drag works too.`
-            : `Click on the bench to drop the ${gateDef(armed).label}, or drag it from the bin.`,
+            ? `Click a socket to place the ${gateDef(armed).label} gate. You can also drag it.`
+            : `Click the bench to place the ${gateDef(armed).label} gate. You can also drag it from the parts bin.`,
           'info'
         );
       }
@@ -172,10 +172,10 @@ export function createApp(refs) {
     hints.registerFailure();
     const action = result.detail?.inputs
       ? {
-          label: 'Set the switches to that case',
+          label: 'Set the switches to this case',
           onClick: () => {
             controls.applyVector(result.detail.inputs);
-            hud.setStatus('Switches set to the case that fails. Watch the bench and the machine.', 'info');
+            hud.setStatus('Switches are set to the case that failed. Watch the bench and the machine.', 'info');
           },
         }
       : null;
@@ -189,7 +189,7 @@ export function createApp(refs) {
     hints.markSolved();
     hud.setProgress(solvedCount());
     hud.setLevel(level, { solved: true });
-    hud.setStatus('That works. Every case checks out.', 'good');
+    hud.setStatus('Correct. Every case matches.', 'good');
     audio.unlockAudio();
     audio.play('solved');
     machine.celebrate(level.machine.celebrate);
@@ -201,7 +201,7 @@ export function createApp(refs) {
           level,
           next,
           onNext: () => loadLevel(level.number + 1),
-          onStay: () => hud.setStatus('Still here. Poke at the test controls as long as you like.', 'info'),
+          onStay: () => hud.setStatus('Stay on this level and try the test buttons.', 'info'),
           onMap: () => openMap(),
         }),
       900
@@ -212,7 +212,7 @@ export function createApp(refs) {
 
   function undo() {
     if (!undoStack.length) {
-      hud.setStatus('Nothing to undo yet.', 'info');
+      hud.setStatus('Nothing to undo.', 'info');
       return;
     }
     redoStack.push(circuit.snapshot());
@@ -221,7 +221,7 @@ export function createApp(refs) {
     palette.setCounts(circuit.countByType());
     scheduleSave();
     audio.play('cut');
-    hud.setStatus('Undone.', 'info');
+    hud.setStatus('Last change undone.', 'info');
   }
 
   function redo() {
@@ -240,7 +240,7 @@ export function createApp(refs) {
     bench.render();
     palette.setCounts(circuit.countByType());
     scheduleSave();
-    hud.setStatus('Bench cleared. Ctrl+Z brings it back.', 'info');
+    hud.setStatus('Bench cleared. Press Undo to bring it back.', 'info');
   }
 
   // --- free play -----------------------------------------------------------
@@ -258,10 +258,28 @@ export function createApp(refs) {
   }
 
   function prettyEvent(name) {
-    return name
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, (c) => c.toUpperCase())
-      .replace(/(\d)/, ' $1');
+    const labels = {
+      launch: 'Ball leaves the shooter lane',
+      drain: 'Ball drains',
+      endOfBall: 'End of ball',
+      leftFlipper: 'Left flipper button',
+      rightFlipper: 'Right flipper button',
+      popBumper: 'Pop bumper',
+      upperBumper: 'Upper pop bumper',
+      sling: 'Slingshot',
+      target1: 'Target G',
+      target2: 'Target A',
+      target3: 'Target T',
+      target4: 'Target E',
+      rampLeft: 'Left ramp',
+      rampRight: 'Right ramp',
+      outlane: 'Left outlane',
+      lock1: 'Lock 1',
+      lock2: 'Lock 2',
+      lock3: 'Lock 3',
+      reset: 'Reset',
+    };
+    return labels[name] || name;
   }
 
   function startFreePlay() {
@@ -275,7 +293,7 @@ export function createApp(refs) {
     clear(refs.freeplayList);
     for (const solvedLevel of LEVELS.filter((l) => progress.isSolved(l.id))) {
       refs.freeplayList.append(
-        h('li', {}, h('strong', { text: solvedLevel.title }), ` - ${boundParts(solvedLevel).length} device(s)`)
+        h('li', {}, h('strong', { text: solvedLevel.title }), ` — ${boundParts(solvedLevel).length} ${boundParts(solvedLevel).length === 1 ? 'part' : 'parts'}`)
       );
     }
     clear(refs.freeplayCount);
@@ -425,7 +443,7 @@ export function createApp(refs) {
     progress.updateSettings({ showValues });
     bench.setShowValues(showValues);
     refs.valuesButton.setAttribute('aria-pressed', showValues ? 'true' : 'false');
-    refs.valuesButton.textContent = showValues ? 'Values on' : 'Values off';
+    refs.valuesButton.textContent = showValues ? '0s and 1s on' : '0s and 1s off';
   });
 
   window.addEventListener('keydown', (event) => {
@@ -469,7 +487,7 @@ export function createApp(refs) {
     audio.setMuted(settings.muted);
     refs.muteButton.textContent = settings.muted ? 'Sound off' : 'Sound on';
     refs.muteButton.setAttribute('aria-pressed', settings.muted ? 'true' : 'false');
-    refs.valuesButton.textContent = settings.showValues ? 'Values on' : 'Values off';
+    refs.valuesButton.textContent = settings.showValues ? '0s and 1s on' : '0s and 1s off';
     refs.valuesButton.setAttribute('aria-pressed', settings.showValues ? 'true' : 'false');
 
     const requested = Number(params.get('level'));

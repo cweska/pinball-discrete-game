@@ -10,7 +10,7 @@ layout; this is the stuff you would otherwise have to re-derive from the code.
   change would need npm packages at runtime, it is the wrong change.
 - **Art stays inline SVG.** Table sounds are the WAV clips in `assets/sounds/`,
   played from `src/machine/audio.js`. Bench cues (place, wire, reject, solved)
-  are still synthesised there.
+  are still synthesized there.
 - **Levels are data.** A new level should be a new file in `src/levels/` plus one
   line in `src/levels/index.js`. If it needs engine changes, the engine is
   probably missing an abstraction.
@@ -33,7 +33,7 @@ layout; this is the stuff you would otherwise have to re-derive from the code.
    combinational level with a latch.
 3. **An empty socket is undriven, not zero.** `sourceValue()` returns `undefined`
    for a wire coming out of a slot with no gate in it, so the bench can draw the
-   pre-wired leads of a half-built level in grey. Anything reading wire values
+   pre-wired leads of a half-built level in gray. Anything reading wire values
    has to handle `driven: false`.
 4. **Wire ids come from one module-level counter.** Both `connect()` and
    `restore()` mint fresh ids, because a restored bench from localStorage would
@@ -74,9 +74,9 @@ see exactly which one broke) and `npm run guide` to regenerate the teacher guide
 
 - `src/ui/app.js` is the controller and owns the frame loop. Each frame it picks
   the input values (the student's test controls if they are driving, otherwise
-  the combination selected under Signal Testing), settles the circuit, paints
+  the combination selected under Try inputs), settles the circuit, paints
   the bench, and pushes part states into the machine. Sound and scoring are
-  suppressed while Signal Testing is driving, which is why the machine is
+  suppressed while Try inputs is driving, which is why the machine is
   animated but quiet between interactions. Repeat walks every input combination;
   Back and Next hold on one. `src/ui/pulse.js` owns that index.
 - `src/ui/bench.js` is the editor. Structural changes re-render the whole SVG
@@ -96,7 +96,7 @@ npm run guide     # if you changed level copy or answers
 ```
 
 The link-check test in `tests/modules.test.js` imports every module under `src/`
-except `main.js`. In a no-build project that is the only cheap defence against a
+except `main.js`. In a no-build project that is the only cheap defense against a
 symbol imported from the wrong file, so keep new modules importable without a
 DOM at load time (touch `document` inside functions, not at the top level).
 

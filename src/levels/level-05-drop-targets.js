@@ -2,12 +2,12 @@ export default {
   id: 'drop-targets',
   act: 2,
   title: 'Drop Target Bank',
-  subtitle: 'Four inputs, two outputs, your wiring.',
+  subtitle: 'Connect the wires yourself.',
   brief: {
-    story:
-      'G - A - T - E. Four drop targets across the middle of the playfield. Knock all four down and the diverter should swing open and the JACKPOT lamp should light. Leave any one standing and nothing should happen at all.',
+    story: 'Four targets spell G, A, T, and E. Nothing happens when a player knocks all four down.',
     goal: 'Open the diverter and light the jackpot only when all four targets are down.',
-    note: 'The leads into the two pair sockets are already done. The wires between sockets, and the wires out to the coil and the lamp, are yours.',
+    note:
+      'A target sends 1 when it is down, and 0 when it is still up. The wires into the two left sockets are already connected. You draw the wires between sockets, and the wires to the coil and the lamp. One output can connect to more than one input.',
   },
   placement: 'slots',
   wiring: 'student',
@@ -20,8 +20,8 @@ export default {
       { id: 't4', label: 'TARGET E', short: 'E', rest: 0, note: 'down = 1' },
     ],
     outputs: [
-      { id: 'gateCoil', label: 'DIVERTER COIL', short: 'GATE' },
-      { id: 'jackpotLamp', label: 'JACKPOT LAMP', short: 'JACK' },
+      { id: 'gateCoil', label: 'DIVERTER COIL', short: 'GATE', note: 'on = 1' },
+      { id: 'jackpotLamp', label: 'JACKPOT LAMP', short: 'JACK', note: 'on = 1' },
     ],
   },
   slots: [
@@ -62,18 +62,19 @@ export default {
     celebrate: 'targetReset',
   },
   testControls: [
-    { kind: 'toggle', input: 't1', label: 'Target G down' },
-    { kind: 'toggle', input: 't2', label: 'Target A down' },
-    { kind: 'toggle', input: 't3', label: 'Target T down' },
-    { kind: 'toggle', input: 't4', label: 'Target E down' },
+    { kind: 'toggle', input: 't1', label: 'Target G' },
+    { kind: 'toggle', input: 't2', label: 'Target A' },
+    { kind: 'toggle', input: 't3', label: 'Target T' },
+    { kind: 'toggle', input: 't4', label: 'Target E' },
   ],
   hints: [
-    'An AND gate only takes two inputs, and you have four targets. Two sockets already have a pair wired in. Each of those answers "are both of mine down?" What do you do with the two answers?',
-    'The empty socket is the last AND. Feed it the output of the G-and-A gate and the output of the T-and-E gate. That answer is "are all four down?"',
-    'Wire s1 output to one pin on s3, and s2 output to the other pin. Then run s3 output to BOTH the diverter coil and the jackpot lamp.',
+    'An AND gate has only two inputs, and you have four targets. Each left socket checks one pair: G with A, and T with E. You still need to check that both pairs are down.',
+    'Put an AND gate in the empty socket. Connect the G-and-A output to one of its inputs, and the T-and-E output to the other. That output is 1 only when all four targets are down.',
+    'Connect that last AND output to both DIVERTER COIL and JACKPOT LAMP. One output pin can have two wires.',
   ],
   teacher: {
-    answer: 'AND(AND(G, A), AND(T, E)), fanned out to both outputs. Pair the targets, then AND the pairs.',
+    answer:
+      'AND targets G and A. AND targets T and E. AND those two results, and connect that output to both the diverter coil and the jackpot lamp.',
     nandgame: 'And (chained)',
     vocab: ['fan-out', 'chaining gates'],
   },
