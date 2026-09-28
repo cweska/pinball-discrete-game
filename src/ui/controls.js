@@ -36,7 +36,9 @@ export function createTestControls(root, { onChange, onSound } = {}) {
   function paint() {
     for (const button of buttons) {
       if (button.control.kind === 'toggle') {
-        const on = values[button.control.input] !== rest[button.control.input];
+        // ON is the signal itself. Rest is not always 0 — GAME ON idles at 1 —
+        // so "away from rest" would read ON while the machine is off.
+        const on = values[button.control.input] === 1;
         setClass(button.el, 'is-on', on);
         button.el.setAttribute('aria-pressed', on ? 'true' : 'false');
         button.state.textContent = on ? 'ON' : 'OFF';
