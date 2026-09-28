@@ -8,6 +8,7 @@
  */
 
 import { clear, h, setClass } from '../util/dom.js';
+import { gloss } from './glossary.js';
 
 const TAP_MS = 300;
 const LIVE_TAIL_MS = 2600;
@@ -63,7 +64,7 @@ export function createTestControls(root, { onChange, onSound } = {}) {
     const el = h(
       'button',
       { class: `tc tc--${control.kind}`, type: 'button' },
-      h('span', { class: 'tc__label', text: control.label }),
+      h('span', { class: 'tc__label' }, gloss(control.label)),
       state
     );
 
@@ -143,7 +144,7 @@ export function createTestControls(root, { onChange, onSound } = {}) {
       clear(root);
       root.append(
         h('h3', { class: 'panel__title', text: 'Test buttons' }),
-        h('p', { class: 'panel__note', text: 'These are the machine\'s switches. The machine does only what your circuit says.' }),
+        h('p', { class: 'panel__note' }, gloss('These are the machine\'s switches. The machine does only what your circuit says.')),
         h('div', { class: 'tc-grid' }, level.testControls.map(build))
       );
       paint();

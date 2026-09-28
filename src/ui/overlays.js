@@ -5,6 +5,7 @@
 
 import { clear, h } from '../util/dom.js';
 import { ACTS, LEVELS } from '../levels/index.js';
+import { gloss } from './glossary.js';
 
 export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
   const dialog = h('dialog', { class: 'modal' });
@@ -97,13 +98,13 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
       open(
         h('h2', { class: 'modal__title', text: 'How to play', dataset: { autofocus: '' } }),
         h('ol', { class: 'help' },
-          h('li', {}, h('strong', { text: 'Read your job. ' }), 'The text above the bench says what this part of the machine should do. Click Show every case to see each 0 and 1 the circuit has to match.'),
-          h('li', {}, h('strong', { text: 'Place a gate. ' }), 'Drag a gate from the parts bin, or click it and then click where it goes. Early levels have sockets you must use. Later levels let you place gates anywhere on the bench.'),
-          h('li', {}, h('strong', { text: 'Connect a wire. ' }), 'A wire goes from an output pin to an input pin. Output pins are the circle on the right of a gate, and the circle on an INPUTS box (left side). Input pins are the circles on the left of a gate, and the circle on an OUTPUTS box (right side). Drag from one circle to the other, or click one and then the other. Click a wire to delete it. One output can connect to many inputs.'),
-          h('li', {}, h('strong', { text: 'Read the wires. ' }), 'Moving dots mean a wire is connected. A bright solid line is 1 (on). A dim dashed line is 0 (off). A gray line is not connected yet. The 0s and 1s button in the top bar shows or hides those numbers.'),
-          h('li', {}, h('strong', { text: 'Try every input. ' }), 'The Try inputs controls, above the bench, walk through every combination of the switches. Back and Next move one combination. Cycle Inputs keeps going until you turn it off.'),
-          h('li', {}, h('strong', { text: 'Test the machine. ' }), 'The buttons under the playfield are the real switches. Hold, tap, or switch them and watch the machine. Then press Test the circuit. That checks every case at once.'),
-          h('li', {}, h('strong', { text: 'If you get stuck, press Hint. ' }), 'A hint also shows up on its own after about two minutes.')
+          h('li', {}, h('strong', { text: 'Read your job. ' }), gloss('The text above the bench says what this part of the machine should do. Click Show every case to see each 0 and 1 the circuit has to match.')),
+          h('li', {}, h('strong', { text: 'Place a gate. ' }), gloss('Drag a gate from the parts bin, or click it and then click where it goes. Early levels have sockets you must use. Later levels let you place gates anywhere on the bench.')),
+          h('li', {}, h('strong', { text: 'Connect a wire. ' }), gloss('A wire goes from an output pin to an input pin. Output pins are the circle on the right of a gate, and the circle on an INPUTS box (left side). Input pins are the circles on the left of a gate, and the circle on an OUTPUTS box (right side). Drag from one circle to the other, or click one and then the other. Click a wire to delete it. One output can connect to many inputs.')),
+          h('li', {}, h('strong', { text: 'Read the wires. ' }), gloss('Moving dots mean a wire is connected. A bright solid line is 1 (on). A dim dashed line is 0 (off). A gray line is not connected yet. The 0s and 1s button in the top bar shows or hides those numbers.')),
+          h('li', {}, h('strong', { text: 'Try every input. ' }), gloss('The Try inputs controls, above the bench, walk through every combination of the switches. Back and Next move one combination. Cycle Inputs keeps going until you turn it off.')),
+          h('li', {}, h('strong', { text: 'Test the machine. ' }), gloss('The buttons under the playfield are the real switches. Hold, tap, or turn them and watch the machine. Then press Test the circuit. That checks every case at once.')),
+          h('li', {}, h('strong', { text: 'If you get stuck, press Hint. ' }), gloss('A hint also shows up on its own after about two minutes.'))
         ),
         h('h3', { class: 'help__sub', text: 'Keyboard' }),
         h('ul', { class: 'help' },
@@ -140,10 +141,10 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
 
       open(
         h('p', { class: 'done__kicker', text: 'It works.' }),
-        h('h2', { class: 'modal__title', text: `${level.title} is working` }),
-        h('p', { class: 'done__body', text: level.teacher.answer }),
+        h('h2', { class: 'modal__title' }, gloss(level.title), ' is working'),
+        h('p', { class: 'done__body' }, gloss(level.teacher.answer)),
         next
-          ? h('p', { class: 'done__next', text: `Next up: ${next.brief.goal}` })
+          ? h('p', { class: 'done__next' }, 'Next up: ', gloss(next.brief.goal))
           : h('p', { class: 'done__next', text: 'You finished every level. The castle machine is ready to play.' }),
         h('div', { class: 'modal__actions' }, buttons)
       );
