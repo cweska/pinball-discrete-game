@@ -338,9 +338,15 @@
   stroke: #ffe3ac;
 }
 
-/* drop targets */
-.target__slot {
+/* drop targets: the letter slides down the slot and under the playfield lip */
+.target__hole {
   fill: #05070d;
+  stroke: #1a2438;
+}
+
+.target__lip {
+  fill: #0b1020;
+  stroke: #26304c;
 }
 
 .target__face {
@@ -349,20 +355,24 @@
 }
 
 .target__letter {
-  fill: #b9c6e3;
+  fill: #e7eefc;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   text-anchor: middle;
   font-family: var(--font);
+  pointer-events: none;
 }
 
 .target__body {
-  transition: transform 160ms ease-in, opacity 160ms ease-in;
+  transition: transform 280ms cubic-bezier(0.55, 0.05, 0.75, 0.2);
 }
 
-.part--target.is-down .target__body {
-  transform: translateY(18px);
-  opacity: 0.25;
+.is-down .target__body {
+  transform: translateY(26px);
+}
+
+.is-down .target__hole {
+  fill: #03050a;
 }
 
 .part--target.is-on .target__face,

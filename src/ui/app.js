@@ -328,6 +328,9 @@ export function createApp(refs) {
     for (const [inputId, partId] of Object.entries(level.machine.inputBind || {})) {
       states.set(partId, { value: inputs[inputId] ? 1 : 0, live: true, target: false, driven: true });
     }
+    for (const partId of level.machine.watch || []) {
+      if (!states.has(partId)) states.set(partId, { value: 0, live: false, target: true, driven: false });
+    }
     for (const [inputId, partId] of Object.entries(level.machine.targetInputs || {})) {
       machine.setTargetDown(partId, inputs[inputId] === 1, { sound });
     }

@@ -100,13 +100,53 @@ function flipperNode(id, def) {
 }
 
 function targetNode(id, def) {
+  const clipId = `target-well-${id.replace(/[^a-z0-9]+/gi, '-')}`;
+  // The face stands on the playfield. The clip ends at the bottom of the slot,
+  // so a downward slide carries the letter under the lip and into the hole.
+  const faceTop = def.y - 16;
+  const faceHeight = 28;
+  const lipY = def.y + 11;
+  const holeTop = def.y + 15;
+  const holeBottom = def.y + 34;
   const group = svg('g', { class: 'part part--target', dataset: { part: id } });
   group.append(
-    svg('rect', { class: 'target__slot', x: def.x - 15, y: def.y + 9, width: 30, height: 5, rx: 2 }),
-    svg('g', { class: 'target__body' },
-      svg('rect', { class: 'target__face', x: def.x - 14, y: def.y - 16, width: 28, height: 26, rx: 4 }),
-      svg('text', { class: 'target__letter', x: def.x, y: def.y + 3, text: def.label })
-    )
+    svg('rect', {
+      class: 'target__hole',
+      x: def.x - 15,
+      y: holeTop,
+      width: 30,
+      height: holeBottom - holeTop,
+      rx: 2,
+    }),
+    svg('clipPath', { id: clipId, clipPathUnits: 'userSpaceOnUse' },
+      svg('rect', {
+        x: def.x - 20,
+        y: faceTop - 6,
+        width: 40,
+        height: holeBottom - (faceTop - 6),
+      })
+    ),
+    svg('g', { class: 'target__clip', 'clip-path': `url(#${clipId})` },
+      svg('g', { class: 'target__body' },
+        svg('rect', {
+          class: 'target__face',
+          x: def.x - 13,
+          y: faceTop,
+          width: 26,
+          height: faceHeight,
+          rx: 3,
+        }),
+        svg('text', { class: 'target__letter', x: def.x, y: def.y + 4, text: def.label })
+      )
+    ),
+    svg('rect', {
+      class: 'target__lip',
+      x: def.x - 17,
+      y: lipY,
+      width: 34,
+      height: 5,
+      rx: 1,
+    })
   );
   return group;
 }

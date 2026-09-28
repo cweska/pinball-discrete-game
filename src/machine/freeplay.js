@@ -29,6 +29,7 @@ export const EVENT_INPUTS = {
   target1: [['drop-targets', 't1']],
   target2: [['drop-targets', 't2']],
   target3: [['drop-targets', 't3']],
+  target4: [['drop-targets', 't4']],
   rampLeft: [['mystery-award', 'rampLeft']],
   rampRight: [['mystery-award', 'rampRight']],
   outlane: [['kickback', 'outlane']],
@@ -55,9 +56,10 @@ const SCRIPT = [
   { x: 108, y: 140, ms: 420 },
   { x: 92, y: 168, ms: 260, event: 'upperBumper' },
   { x: 128, y: 196, ms: 300, event: 'upperBumper' },
-  { x: 140, y: 240, ms: 340, event: 'target1' },
-  { x: 176, y: 240, ms: 300, event: 'target2' },
-  { x: 212, y: 240, ms: 300, event: 'target3' },
+  { x: 122, y: 230, ms: 340, event: 'target1' },
+  { x: 158, y: 230, ms: 280, event: 'target2' },
+  { x: 194, y: 230, ms: 280, event: 'target3' },
+  { x: 230, y: 230, ms: 280, event: 'target4' },
   { x: 268, y: 262, ms: 360 },
   { x: 308, y: 226, ms: 320, event: 'rampRight' },
   { x: 300, y: 320, ms: 460 },
@@ -97,6 +99,7 @@ export function createFreePlay({ machine, onEvent } = {}) {
   let legTime = 0;
   let position = { x: SCRIPT[0].x, y: SCRIPT[0].y };
   const pulses = [];
+  const liveTargets = new Set();
 
   function buildRuntimes() {
     runtimes.clear();
@@ -160,6 +163,7 @@ export function createFreePlay({ machine, onEvent } = {}) {
   /** @returns {Map<string, {value: number}>} part values from every wired circuit */
   function evaluateAll() {
     const values = new Map();
+    liveTargets.clear();
     for (const runtime of runtimes.values()) {
       const result = settle(runtime.circuit, runtime.inputs, runtime.state);
       for (const [outputId, parts] of Object.entries(runtime.level.machine.bind || {})) {
@@ -174,6 +178,7 @@ export function createFreePlay({ machine, onEvent } = {}) {
       const targetInputs = runtime.level.machine.targetInputs || {};
       for (const [inputId, partId] of Object.entries(targetInputs)) {
         machine.setTargetDown(partId, runtime.inputs[inputId] === 1);
+        liveTargets.add(partId);
       }
     }
     return values;
@@ -212,6 +217,9 @@ export function createFreePlay({ machine, onEvent } = {}) {
       const values = evaluateAll();
       const states = new Map();
       for (const [partId, value] of values) states.set(partId, { value, live: true, target: false, driven: true });
+      for (const partId of liveTargets) {
+        if (!states.has(partId)) states.set(partId, { value: 0, live: true, target: false, driven: true });
+      }
       machine.applyState(states, { sound: true, scoring: true });
     },
   };

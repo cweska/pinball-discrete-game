@@ -7,7 +7,7 @@ export default {
     story:
       'Three lock switches, three lamps, one ball release coil, and the knocker on the back of the cabinet that fires when something big happens. This is the last empty bench on the machine.',
     goal: 'Each lock lamp lights on its own switch and holds. When all three are lit, fire the ball release. The reset line clears all three.',
-    note: 'Three of what you built on Lock 1, plus the all-three test you built on the drop targets. The reset line has to reach every one of them.',
+    note: 'Three of what you built on Lock 1, plus the same idea as the drop targets: AND answers together until every one is in. The reset line has to reach every one of them.',
   },
   placement: 'free',
   wiring: 'student',
