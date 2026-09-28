@@ -77,7 +77,7 @@ see exactly which one broke) and `npm run guide` to regenerate the teacher guide
   the combination selected under Try inputs), settles the circuit, paints
   the bench, and pushes part states into the machine. Sound and scoring are
   suppressed while Try inputs is driving, which is why the machine is
-  animated but quiet between interactions. Repeat walks every input combination;
+  animated but quiet between interactions. Cycle Inputs walks every input combination;
   Back and Next hold on one. `src/ui/pulse.js` owns that index.
 - `src/ui/bench.js` is the editor. Structural changes re-render the whole SVG
   (it is tiny); `paint()` only touches classes and dot positions, so it is safe

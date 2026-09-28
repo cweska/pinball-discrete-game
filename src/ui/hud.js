@@ -3,7 +3,7 @@
  * the status line and the hint card.
  */
 
-import { clear, h, setClass } from '../util/dom.js';
+import { clear, h, setClass, svg } from '../util/dom.js';
 import { goalTable } from '../engine/validator.js';
 import { TIER_LABELS } from './hints.js';
 import { ACTS, LEVELS } from '../levels/index.js';
@@ -64,12 +64,23 @@ export function createHud(refs) {
   const signalCount = h('span', { class: 'signal-test__count', text: '' });
   const signalBits = h('span', { class: 'signal-test__bits', text: '' });
   const signalReadout = h('span', { class: 'signal-test__readout', 'aria-live': 'polite' }, signalCount, signalBits);
-  const repeatButton = h('button', {
-    class: 'signal-test__btn signal-test__repeat',
-    type: 'button',
-    'aria-pressed': 'true',
-    text: 'Repeat',
-  });
+  const repeatButton = h(
+    'button',
+    {
+      class: 'signal-test__btn signal-test__repeat',
+      type: 'button',
+      'aria-pressed': 'true',
+    },
+    'Cycle Inputs',
+    svg(
+      'svg',
+      { class: 'signal-test__cycle', viewBox: '0 0 24 24', 'aria-hidden': 'true' },
+      svg('path', {
+        fill: 'currentColor',
+        d: 'M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z',
+      })
+    )
+  );
   const backButton = h('button', {
     class: 'signal-test__btn',
     type: 'button',
