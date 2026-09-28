@@ -12,7 +12,7 @@ const NEXT_MS = 90_000;
 const MIN_GAP_MS = 25_000;
 const FAILURES_PER_NUDGE = 3;
 
-export const TIER_LABELS = ['', 'A nudge', 'Getting warmer', 'Almost telling you'];
+export const TIER_LABELS = ['', 'Hint', 'More help', 'Almost the answer'];
 
 export function createHints({ onHint } = {}) {
   let level = null;

@@ -66,7 +66,7 @@ for (const level of LEVELS) {
     assert.ok(['fixed', 'student'].includes(level.wiring));
     assert.ok(level.io.inputs.length >= 1 && level.io.outputs.length >= 1);
     for (const terminal of [...level.io.inputs, ...level.io.outputs]) {
-      assert.ok(terminal.id && terminal.label, 'terminals are labelled');
+      assert.ok(terminal.id && terminal.label, 'terminals are labeled');
       assert.ok(terminal.short === undefined || terminal.short.length <= 6, `${terminal.id} short label`);
     }
     if (level.placement === 'slots') {

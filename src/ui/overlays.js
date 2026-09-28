@@ -1,6 +1,6 @@
 /**
- * Modal panels: the act map, the how-to-play card, and the moment a feature
- * comes alive.
+ * Modal panels: the level map, the how-to-play card, and the moment a feature
+ * starts working.
  */
 
 import { clear, h } from '../util/dom.js';
@@ -41,7 +41,7 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
       },
       h('span', { class: 'map__num', text: String(level.number) }),
       h('span', { class: 'map__name', text: level.title }),
-      h('span', { class: 'map__state', text: solved ? 'wired' : open ? 'open' : 'locked' })
+      h('span', { class: 'map__state', text: solved ? 'done' : open ? 'open' : 'locked' })
     );
     if (open) button.addEventListener('click', () => {
       dialog.close();
@@ -79,8 +79,8 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
         h('span', {
           class: 'map__freeplay-note',
           text: freePlayReady
-            ? 'Turn the machine loose. A ball runs the playfield and every circuit you built drives it.'
-            : 'Wire at least three features to open this up.',
+            ? 'The machine plays by itself. A ball rolls around, and your finished circuits control it.'
+            : 'Finish at least 3 levels to unlock this.',
         })
       );
       if (freePlayReady) {
@@ -90,26 +90,26 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
         });
       }
 
-      open(h('h2', { class: 'modal__title', text: 'Act map', dataset: { autofocus: '' } }), ...acts, freePlay);
+      open(h('h2', { class: 'modal__title', text: 'Levels', dataset: { autofocus: '' } }), ...acts, freePlay);
     },
 
     showHelp() {
       open(
         h('h2', { class: 'modal__title', text: 'How to play', dataset: { autofocus: '' } }),
         h('ol', { class: 'help' },
-          h('li', {}, h('strong', { text: 'Read the job. ' }), 'Each build tells you what the machine should do. "Show exactly what it has to do" spells it out signal by signal.'),
-          h('li', {}, h('strong', { text: 'Place a gate. ' }), 'Drag one out of the parts bin, or click it and then click where it goes. Early builds have sockets; later ones let you put gates anywhere.'),
-          h('li', {}, h('strong', { text: 'Wire it. ' }), 'Drag from the circle on the right of a gate, or click a whole terminal, then drop on an input pin or a TO THE MACHINE terminal. Click a pin then another pin works too. Click a wire to remove it. One output can feed as many inputs as you like.'),
-          h('li', {}, h('strong', { text: 'Watch the flow. ' }), 'Dots travel along every live wire. Bright and solid means 1, dim and dashed means 0, grey means nothing is driving it yet.'),
-          h('li', {}, h('strong', { text: 'Step the inputs. ' }), 'Signal Testing walks every combination of the input switches. Back and Next move one combination at a time. Repeat cycles through all of them until you turn it off.'),
-          h('li', {}, h('strong', { text: 'Test it. ' }), 'The test controls close real switches. Hold, tap or flip them and watch the machine. Then press Test the circuit to check every case at once.'),
-          h('li', {}, h('strong', { text: 'Stuck? ' }), 'Hints arrive on their own after a couple of minutes, or press Hint whenever you want one.')
+          h('li', {}, h('strong', { text: 'Read your job. ' }), 'The text above the bench says what this part of the machine should do. Click Show every case to see each 0 and 1 the circuit has to match.'),
+          h('li', {}, h('strong', { text: 'Place a gate. ' }), 'Drag a gate from the parts bin, or click it and then click where it goes. Early levels have sockets you must use. Later levels let you place gates anywhere on the bench.'),
+          h('li', {}, h('strong', { text: 'Connect a wire. ' }), 'A wire goes from an output pin to an input pin. Output pins are the circle on the right of a gate, and the circle on an INPUTS box (left side). Input pins are the circles on the left of a gate, and the circle on an OUTPUTS box (right side). Drag from one circle to the other, or click one and then the other. Click a wire to delete it. One output can connect to many inputs.'),
+          h('li', {}, h('strong', { text: 'Read the wires. ' }), 'Moving dots mean a wire is connected. A bright solid line is 1 (on). A dim dashed line is 0 (off). A gray line is not connected yet. The 0s and 1s button in the top bar shows or hides those numbers.'),
+          h('li', {}, h('strong', { text: 'Try every input. ' }), 'The Try inputs controls, above the bench, walk through every combination of the switches. Back and Next move one combination. Repeat keeps going until you turn it off.'),
+          h('li', {}, h('strong', { text: 'Test the machine. ' }), 'The buttons under the playfield are the real switches. Hold, tap, or switch them and watch the machine. Then press Test the circuit. That checks every case at once.'),
+          h('li', {}, h('strong', { text: 'If you get stuck, press Hint. ' }), 'A hint also shows up on its own after about two minutes.')
         ),
         h('h3', { class: 'help__sub', text: 'Keyboard' }),
         h('ul', { class: 'help' },
-          h('li', {}, 'Tab moves between parts, sockets and pins. Enter picks up a gate, then Enter on a socket drops it in.'),
-          h('li', {}, 'Enter on one pin then Enter on another draws a wire between them.'),
-          h('li', {}, 'Delete removes the focused gate. Ctrl+Z undoes. Escape cancels.')
+          h('li', {}, 'Tab moves between gates, sockets, and pins. Press Enter to pick up a gate. Press Enter on a socket to place it.'),
+          h('li', {}, 'Press Enter on one pin, then Enter on another pin, to connect a wire.'),
+          h('li', {}, 'Delete removes the selected gate. Press Undo, or Ctrl+Z (Cmd+Z on a Mac), to undo. Escape cancels.')
         )
       );
     },
@@ -131,7 +131,7 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
         });
         buttons.push(button);
       }
-      const stay = h('button', { class: 'btn', type: 'button', text: 'Stay here and poke at it' });
+      const stay = h('button', { class: 'btn', type: 'button', text: 'Stay and try it' });
       stay.addEventListener('click', () => {
         dialog.close();
         onStay?.();
@@ -139,12 +139,12 @@ export function createOverlays(host, { onSelectLevel, onFreePlay } = {}) {
       buttons.push(stay);
 
       open(
-        h('p', { class: 'done__kicker', text: 'That works.' }),
-        h('h2', { class: 'modal__title', text: `${level.title} is alive` }),
+        h('p', { class: 'done__kicker', text: 'It works.' }),
+        h('h2', { class: 'modal__title', text: `${level.title} is working` }),
         h('p', { class: 'done__body', text: level.teacher.answer }),
         next
-          ? h('p', { class: 'done__next', text: `Up next: ${next.brief.goal}` })
-          : h('p', { class: 'done__next', text: 'Every feature on GATECRASHER is wired. The machine is yours.' }),
+          ? h('p', { class: 'done__next', text: `Next up: ${next.brief.goal}` })
+          : h('p', { class: 'done__next', text: 'You finished every level. The castle machine is ready to play.' }),
         h('div', { class: 'modal__actions' }, buttons)
       );
     },

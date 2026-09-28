@@ -2,12 +2,12 @@ export default {
   id: 'mystery-award',
   act: 2,
   title: 'Mystery Award',
-  subtitle: 'Exactly one.',
+  subtitle: 'One gate for "different," one for "both."',
   brief: {
-    story:
-      'Two wireform ramps feed the upper playfield. Make just one of them and the MYSTERY lamp is supposed to pulse - the award only exists for players who leave the other ramp alone. Make both and the gate wheel toy spins instead.',
-    goal: 'MYSTERY lights when exactly one ramp is made. The gate wheel spins when both are.',
-    note: 'No sockets from here on. Drag gates anywhere on the bench and wire every connection yourself.',
+    story: 'Two ramps lead to the upper playfield. The mystery light and the gate wheel are both off.',
+    goal: 'Light MYSTERY when exactly one ramp is made. Spin the gate wheel when both ramps are made.',
+    note:
+      'There are no sockets on this level. Drag gates onto the bench and connect every wire yourself. "Exactly one" means the two inputs are different: 1 and 0, or 0 and 1.',
   },
   placement: 'free',
   wiring: 'student',
@@ -21,8 +21,8 @@ export default {
       { id: 'rampRight', label: 'RIGHT RAMP', short: 'RIGHT', rest: 0, note: 'made = 1' },
     ],
     outputs: [
-      { id: 'lampMystery', label: 'MYSTERY LAMP', short: 'MYST' },
-      { id: 'motorSpinner', label: 'GATE WHEEL MOTOR', short: 'WHEEL' },
+      { id: 'lampMystery', label: 'MYSTERY LAMP', short: 'MYST', note: 'on = 1' },
+      { id: 'motorSpinner', label: 'GATE WHEEL', short: 'WHEEL', note: 'on = 1' },
     ],
   },
   slots: [],
@@ -50,16 +50,17 @@ export default {
   },
   machine: { bind: { lampMystery: 'lamp.mystery', motorSpinner: 'toy.spinner' }, celebrate: 'spinUp' },
   testControls: [
-    { kind: 'toggle', input: 'rampLeft', label: 'Left ramp made' },
-    { kind: 'toggle', input: 'rampRight', label: 'Right ramp made' },
+    { kind: 'toggle', input: 'rampLeft', label: 'Left ramp' },
+    { kind: 'toggle', input: 'rampRight', label: 'Right ramp' },
   ],
   hints: [
-    '"Exactly one" means the two ramps disagree. Which gate in the bin answers 1 only when its inputs are different?',
-    'XOR handles the mystery lamp. The gate wheel is the plain "both of them" question you already solved on the pop bumper.',
-    'Both ramp terminals feed both gates: left and right into XOR, left and right into AND. Four wires in, two wires out.',
+    'Look at the two outputs separately. MYSTERY is on when the ramps are different. The wheel is on when both ramps are 1.',
+    'XOR outputs 1 only when its two inputs are different. Use XOR for the mystery lamp. Use AND for the wheel. AND is the same "both must be 1" rule as the pop bumper.',
+    'Connect both ramp inputs to the XOR gate, and both ramp inputs to the AND gate. Then connect XOR to MYSTERY LAMP and AND to GATE WHEEL.',
   ],
   teacher: {
-    answer: 'lampMystery = XOR(left, right); motorSpinner = AND(left, right). Both inputs fan out to two gates.',
+    answer:
+      'XOR of the two ramps goes to the mystery lamp. AND of the two ramps goes to the gate wheel. Both ramp wires connect to both gates.',
     nandgame: 'Xor',
     vocab: ['exclusive or', 'fan-out'],
   },

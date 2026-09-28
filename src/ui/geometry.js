@@ -47,7 +47,7 @@ export function terminalBox(kind, index, count) {
   };
 }
 
-/** Pin offsets relative to the centre of a gate box. */
+/** Pin offsets relative to the center of a gate box. */
 export function pinOffsets(inputs) {
   const offsets = { [OUT]: { x: GATE.w / 2, y: 0 } };
   if (inputs.length === 1) {

@@ -101,7 +101,7 @@ export function createTestControls(root, { onChange, onSound } = {}) {
         }, TAP_MS);
         timers.add(timer);
       });
-      el.title = 'One quick switch closure';
+      el.title = 'Tap once';
     } else if (control.kind === 'toggle') {
       el.addEventListener('click', () => {
         onSound?.('relay');
@@ -109,7 +109,7 @@ export function createTestControls(root, { onChange, onSound } = {}) {
         set(control.input, on ? rest[control.input] : pressed);
       });
       el.setAttribute('aria-pressed', 'false');
-      el.title = 'Stays where you put it';
+      el.title = 'Click to turn it on or off. It stays that way.';
     } else if (control.kind === 'cycle') {
       cycleIndex.set(control.id, 0);
       el.addEventListener('click', () => {
@@ -119,7 +119,7 @@ export function createTestControls(root, { onChange, onSound } = {}) {
         Object.assign(values, control.steps[next]);
         changed();
       });
-      el.title = 'Clicks round one position at a time';
+      el.title = 'Click to go to the next position.';
     }
 
     buttons.push({ el, control, state });
@@ -142,8 +142,8 @@ export function createTestControls(root, { onChange, onSound } = {}) {
       liveUntil = 0;
       clear(root);
       root.append(
-        h('h3', { class: 'panel__title', text: 'Test controls' }),
-        h('p', { class: 'panel__note', text: 'These feed the real switches. The machine only does what your circuit says.' }),
+        h('h3', { class: 'panel__title', text: 'Test buttons' }),
+        h('p', { class: 'panel__note', text: 'These are the machine\'s switches. The machine does only what your circuit says.' }),
         h('div', { class: 'tc-grid' }, level.testControls.map(build))
       );
       paint();

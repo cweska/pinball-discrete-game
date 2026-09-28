@@ -1,6 +1,6 @@
 /**
  * Table parts play samples taken from the Visual Pinball example table
- * (see assets/sounds/SOURCES.txt). Bench cues stay synthesised: placing a
+ * (see assets/sounds/SOURCES.txt). Bench cues stay synthesized: placing a
  * gate, drawing a wire, and the short tones for a solved level.
  */
 

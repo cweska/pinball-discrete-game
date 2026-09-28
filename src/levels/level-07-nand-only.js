@@ -2,22 +2,22 @@ export default {
   id: 'nand-only',
   act: 3,
   title: 'Parts Shortage',
-  subtitle: 'The bin is all NANDs.',
+  subtitle: 'Use only NAND gates.',
   brief: {
-    story:
-      'The upper pop bumper needs the same guard the flippers got: fire on the ball, stay dead when the machine is tilted. The crate that showed up has nothing in it but NAND gates. Distributor says three weeks.',
-    goal: 'Fire the upper pop bumper when its skirt is hit, unless the machine is tilted - using only NANDs.',
-    note: 'A NAND with the same signal on both pins behaves like something you have used before. Try it.',
+    story: 'The upper pop bumper should ignore hits while the machine is tilted. The parts bin has only NAND gates.',
+    goal: 'Fire the upper pop bumper when its skirt is hit, unless the machine is tilted. Use only NAND gates.',
+    note:
+      'You need the same rule as Tilt Guard: the skirt is 1 and tilt is 0. If you connect the same wire to both inputs of a NAND gate, it works like an INVERT gate. Try that first.',
   },
   placement: 'free',
   wiring: 'student',
   palette: [{ type: 'NAND', count: 3 }],
   io: {
     inputs: [
-      { id: 'skirt2', label: 'UPPER SKIRT', short: 'SKIRT', rest: 0, note: 'ball hit = 1' },
-      { id: 'tilt', label: 'TILT BOB', short: 'TILT', rest: 0, note: 'tilted = 1' },
+      { id: 'skirt2', label: 'UPPER SKIRT', short: 'SKIRT', rest: 0, note: 'hit = 1' },
+      { id: 'tilt', label: 'TILT', short: 'TILT', rest: 0, note: 'tilted = 1' },
     ],
-    outputs: [{ id: 'upperCoil', label: 'UPPER POP COIL', short: 'COIL' }],
+    outputs: [{ id: 'upperCoil', label: 'UPPER POP COIL', short: 'COIL', note: 'on = 1' }],
   },
   slots: [],
   prewired: [],
@@ -43,16 +43,17 @@ export default {
   },
   machine: { bind: { upperCoil: 'bumper.upper' }, inputBind: { tilt: 'lamp.tilt' }, celebrate: 'chimeRun' },
   testControls: [
-    { kind: 'tap', input: 'skirt2', label: 'Hit: Upper Skirt' },
-    { kind: 'toggle', input: 'tilt', label: 'Tilt Bob' },
+    { kind: 'tap', input: 'skirt2', label: 'Tap upper bumper' },
+    { kind: 'toggle', input: 'tilt', label: 'Tilt' },
   ],
   hints: [
-    'Feed the same signal into both pins of one NAND and watch what comes out. That is one of your missing parts, for free.',
-    'NAND is AND with its answer flipped. So build the NAND of what you want, then flip it back with a second NAND wired as an inverter.',
-    'Three gates: NAND(tilt, tilt) makes NOT tilt. NAND(skirt, NOT tilt) is almost the answer but upside down. A third NAND with that signal on both pins turns it the right way up.',
+    'Connect the tilt wire to both inputs of one NAND gate. Watch the output. It is the opposite of tilt.',
+    'NAND is AND with the answer flipped. Build the condition you want, then flip the answer back with another NAND used as an INVERT.',
+    'Use three NAND gates. The first gets tilt on both inputs, so its output is NOT tilt. The second gets the skirt and that NOT tilt. That output is the opposite of what the coil needs. The third gets that output on both inputs, which flips it to the right answer. Connect the third output to the coil.',
   ],
   teacher: {
-    answer: 'g1 = NAND(tilt,tilt) = NOT tilt. g2 = NAND(skirt, g1). g3 = NAND(g2,g2) = skirt AND NOT tilt.',
+    answer:
+      'Three NAND gates. NAND with tilt on both inputs makes NOT tilt. NAND of the skirt and NOT tilt is the answer flipped. A third NAND with that signal on both inputs flips it back.',
     nandgame: 'Invert / And built from NAND',
     vocab: ['universal gate', 'De Morgan'],
   },

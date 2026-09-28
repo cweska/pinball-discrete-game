@@ -2,21 +2,22 @@ export default {
   id: 'slingshot',
   act: 1,
   title: 'Slingshot',
-  subtitle: 'Either one will do.',
+  subtitle: 'Either input can be 1.',
   brief: {
-    story:
-      'The right slingshot has two long blade switches behind its rubber, one high and one low. A ball can brush either one. The kicker behind them has never moved.',
-    goal: 'Kick the ball back when the ball touches either blade switch.',
+    story: 'The right slingshot has two switches. The kicker behind them never moves.',
+    goal: 'Kick the ball when it touches the upper switch or the lower switch.',
+    note:
+      'The coil should turn on if either switch is 1. It should also turn on if both switches are 1. It stays off only when both switches are 0.',
   },
   placement: 'slots',
   wiring: 'fixed',
   palette: [{ type: 'OR', count: 1 }],
   io: {
     inputs: [
-      { id: 'bladeUpper', label: 'UPPER BLADE', short: 'UP', rest: 0, note: 'touched = 1' },
-      { id: 'bladeLower', label: 'LOWER BLADE', short: 'LOW', rest: 0, note: 'touched = 1' },
+      { id: 'bladeUpper', label: 'UPPER SWITCH', short: 'UP', rest: 0, note: 'hit = 1' },
+      { id: 'bladeLower', label: 'LOWER SWITCH', short: 'LWR', rest: 0, note: 'hit = 1' },
     ],
-    outputs: [{ id: 'slingCoil', label: 'SLINGSHOT COIL', short: 'COIL' }],
+    outputs: [{ id: 'slingCoil', label: 'SLINGSHOT COIL', short: 'COIL', note: 'on = 1' }],
   },
   slots: [{ id: 's1', x: 392, y: 220, accepts: ['OR'] }],
   prewired: [
@@ -31,16 +32,16 @@ export default {
   reference: { gates: [{ slot: 's1', type: 'OR' }], wires: [] },
   machine: { bind: { slingCoil: 'slingshot.right' }, celebrate: 'slapBack' },
   testControls: [
-    { kind: 'tap', input: 'bladeUpper', label: 'Hit: Upper Blade' },
-    { kind: 'tap', input: 'bladeLower', label: 'Hit: Lower Blade' },
+    { kind: 'tap', input: 'bladeUpper', label: 'Tap upper switch' },
+    { kind: 'tap', input: 'bladeLower', label: 'Tap lower switch' },
   ],
   hints: [
-    'Last level needed both inputs to be 1. This one is the other way round.',
-    'Upper blade on its own should kick. Lower blade on its own should kick. Both at once should still kick.',
-    'The OR gate is the one that answers 1 when either input is 1. Drop it in the socket.',
+    'On the last level, both inputs had to be 1. Here, either input is enough.',
+    'The upper switch alone should kick. The lower switch alone should kick. Both switches at once should still kick.',
+    'Put the OR gate in the socket. OR outputs 1 when at least one input is 1.',
   ],
   teacher: {
-    answer: 'One OR. Only blade=0,0 leaves the coil off.',
+    answer: 'One OR gate. The coil is 1 when either switch is 1. It is 0 only when both switches are 0.',
     nandgame: 'Or',
     vocab: ['OR', 'disjunction'],
   },

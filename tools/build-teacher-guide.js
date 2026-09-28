@@ -55,7 +55,7 @@ function levelSection(level) {
   const lines = [];
   lines.push(`### ${level.number}. ${level.title}`);
   lines.push('');
-  lines.push(`**What comes alive:** ${level.brief.goal}`);
+  lines.push(`**The job:** ${level.brief.goal}`);
   lines.push('');
   lines.push(`**Parts bin:** ${partsBin(level)}  `);
   lines.push(
@@ -100,10 +100,10 @@ const HEADER = `# GATECRASHER - teacher guide
 > \`src/levels/\`, not this file.
 
 GATECRASHER hands a student an almost-finished pinball machine. Thirteen of its
-features are dead, and each one comes alive when the student builds the logic
-circuit behind it out of NAND, INVERT, AND, OR and XOR gates. The machine is the
-feedback: a wrong circuit means the flipper does not move, the bumper fires when
-nobody is playing, or the lamp forgets it was ever lit.
+features do not work yet. Each one starts working when the student builds the
+logic circuit behind it from NAND, INVERT, AND, OR, and XOR gates. The machine
+shows the result: a wrong circuit means the flipper does not move, the bumper
+fires when nobody is playing, or the lamp turns off as soon as the switch opens.
 
 ## What students need first
 
@@ -139,13 +139,13 @@ difficulty.
 
 | Act | Levels | What is new | Roughly |
 | --- | --- | --- | --- |
-| 1. Wake It Up | 1-3 | One gate, one socket, wiring already done | A short first sitting |
-| 2. Rules Take Shape | 4-6 | Two or three gates, then the student wires it, then free placement | One sitting |
-| 3. Make Do | 7-9 | Build AND and INVERT out of NANDs; several outputs at once | One sitting |
-| 4. The Machine Remembers | 10-13 | Feedback, latches, stored state | Two sittings |
+| 1. First Gates | 1-3 | One gate, one socket, wiring already done | A short first sitting |
+| 2. Gates Together | 4-6 | Two or three gates, then the student connects the wires, then free placement | One sitting |
+| 3. NAND Only | 7-9 | Build AND and INVERT from NAND gates; several outputs at once | One sitting |
+| 4. Memory Circuits | 10-13 | Feedback, memory circuits, stored state | Two sittings |
 
-After level 13, Free Play turns the machine loose: a ball runs the playfield and
-every circuit the student built drives it at once. It is worth projecting.
+After level 13, Free Play runs the machine on its own. A ball moves around the
+playfield, and every circuit the student built controls it. It is worth projecting.
 
 ## Things worth stopping the class for
 
@@ -163,8 +163,8 @@ every circuit the student built drives it at once. It is worth projecting.
   both lamps on, which is impossible for a real lane change. Let them find it.
 - **Why a latch is refused earlier.** Combinational levels are checked from both
   a LOW and a HIGH power-up, so a circuit that remembers anything is rejected
-  with "this circuit remembers things it should not". That is not a bug to work
-  around; it is the definition of combinational.
+  with "This circuit remembers an old value." That is not a bug to work around.
+  It is the definition of a circuit that should depend only on the inputs.
 
 ## How the game supports a stuck student
 
@@ -174,7 +174,7 @@ every circuit the student built drives it at once. It is worth projecting.
   three failed checks in a row moves the ladder along.
 - A failed check names the exact case that breaks, and offers to set the test
   switches to that case so the student can watch it happen.
-- Nothing is ever solved for them, and nothing is penalised. Hint use is stored
+- Nothing is ever solved for them, and nothing is penalized. Hint use is stored
   per level if you want to look at it.
 
 ## Answer key

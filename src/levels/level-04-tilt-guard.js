@@ -2,12 +2,12 @@ export default {
   id: 'tilt-guard',
   act: 2,
   title: 'Tilt Guard',
-  subtitle: 'Two sockets. Pick carefully.',
+  subtitle: 'Use both gates.',
   brief: {
-    story:
-      'Players shove this machine. The tilt bob swings, the TILT lamp comes on, and the right flipper keeps working anyway - so shoving still pays. Not on our machine.',
-    goal: 'The right flipper fires when the button is held, unless the machine is tilted.',
-    note: 'Two sockets are wired in already. Look at how many leads run into each one before you choose what goes where.',
+    story: 'Players shove the machine to cheat. The tilt light comes on, but the right flipper still works.',
+    goal: 'The right flipper works when its button is held, unless the machine is tilted.',
+    note:
+      'The button is 1 while you hold it. TILT is 1 when the machine is tilted. The coil should be 1 only when the button is 1 and TILT is 0. Two sockets are already wired. Count the wires going into each socket before you pick a gate.',
   },
   placement: 'slots',
   wiring: 'fixed',
@@ -17,10 +17,10 @@ export default {
   ],
   io: {
     inputs: [
-      { id: 'btnRight', label: 'RIGHT BUTTON', short: 'BTN', rest: 0, note: 'held = 1' },
-      { id: 'tilt', label: 'TILT BOB', short: 'TILT', rest: 0, note: 'tilted = 1' },
+      { id: 'btnRight', label: 'RIGHT BUTTON', short: 'BTN', rest: 0, note: 'hold = 1' },
+      { id: 'tilt', label: 'TILT', short: 'TILT', rest: 0, note: 'tilted = 1' },
     ],
-    outputs: [{ id: 'coilRight', label: 'RIGHT FLIPPER COIL', short: 'COIL' }],
+    outputs: [{ id: 'coilRight', label: 'RIGHT FLIPPER COIL', short: 'COIL', note: 'on = 1' }],
   },
   slots: [
     { id: 's1', x: 348, y: 300, accepts: ['INV', 'AND'] },
@@ -45,16 +45,16 @@ export default {
   },
   machine: { bind: { coilRight: 'flipper.right' }, inputBind: { tilt: 'lamp.tilt' }, celebrate: 'flipperFlutter' },
   testControls: [
-    { kind: 'hold', input: 'btnRight', label: 'Hold: Right Button' },
-    { kind: 'toggle', input: 'tilt', label: 'Tilt Bob' },
+    { kind: 'hold', input: 'btnRight', label: 'Hold right button' },
+    { kind: 'toggle', input: 'tilt', label: 'Tilt' },
   ],
   hints: [
-    'The coil wants 1 when the button is 1 and the tilt line is 0. Only one of your two gates can change a 0 into a 1.',
-    'The tilt line has to be turned upside down before it is any use to an AND gate.',
-    'INVERT goes in the socket with a single lead coming in. AND goes in the socket with two.',
+    'The coil should be 1 when the button is 1 and TILT is 0. Only one of your two gates can turn a 0 into a 1.',
+    'Turn the tilt signal into its opposite before it reaches the AND gate. Then AND can check "button is on" and "tilt is off" together.',
+    'Put INVERT in the socket with one wire coming in. Put AND in the socket with two wires coming in.',
   ],
   teacher: {
-    answer: 'INV on the tilt line, then AND with the button. coil = button AND (NOT tilt).',
+    answer: 'INVERT the tilt wire, then AND that result with the button. The coil is 1 only when the button is 1 and tilt is 0.',
     nandgame: 'And / Invert',
     vocab: ['negation', 'guard condition'],
   },

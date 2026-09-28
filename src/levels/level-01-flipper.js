@@ -2,20 +2,20 @@ export default {
   id: 'flipper-live',
   act: 1,
   title: 'Flipper Live',
-  subtitle: 'One gate. One socket.',
+  subtitle: 'Place one INVERT gate.',
   brief: {
     story:
-      'GATECRASHER came off the truck almost finished. The left flipper is bolted in, the coil is good, the button works. Press it and nothing happens.',
-    goal: 'Make the left flipper coil fire while the button is held.',
+      'The castle pinball machine is almost finished. The left flipper is installed, but its button does nothing.',
+    goal: 'Make the left flipper move while the left button is held down.',
     note:
-      'Pinball switches close to ground, so the LEFT BUTTON line sits at 1 and drops to 0 when you press it. The coil needs a 1 to fire.',
+      'The LEFT BUTTON wire starts at 1. Pressing the button changes it to 0. The coil turns on only when it gets a 1. Place a gate that turns 0 into 1.',
   },
   placement: 'slots',
   wiring: 'fixed',
   palette: [{ type: 'INV', count: 1 }],
   io: {
-    inputs: [{ id: 'btnLeft', label: 'LEFT BUTTON', short: 'BTN', rest: 1, note: 'pressed = 0' }],
-    outputs: [{ id: 'coilLeft', label: 'LEFT FLIPPER COIL', short: 'COIL', note: 'fires on 1' }],
+    inputs: [{ id: 'btnLeft', label: 'LEFT BUTTON', short: 'BTN', rest: 1, note: 'press = 0' }],
+    outputs: [{ id: 'coilLeft', label: 'LEFT FLIPPER COIL', short: 'COIL', note: 'on = 1' }],
   },
   slots: [{ id: 's1', x: 392, y: 220, accepts: ['INV'] }],
   prewired: [
@@ -31,14 +31,15 @@ export default {
   },
   reference: { gates: [{ slot: 's1', type: 'INV' }], wires: [] },
   machine: { bind: { coilLeft: 'flipper.left' }, celebrate: 'flipperFlutter' },
-  testControls: [{ kind: 'hold', input: 'btnLeft', label: 'Hold: Left Button' }],
+  testControls: [{ kind: 'hold', input: 'btnLeft', label: 'Hold left button' }],
   hints: [
-    'Hold the test button and watch the number leaving the LEFT BUTTON terminal. Is that what the coil wants?',
-    'Pressing sends 0. The coil fires on 1. You need a part that flips a signal to its opposite.',
-    'Drag the INVERT gate out of the parts bin and drop it into the empty socket.',
+    'Hold the test button. Watch the number on LEFT BUTTON. Then look at what LEFT FLIPPER COIL needs in order to turn on.',
+    'Pressing the button sends 0. The coil turns on when it gets 1. You need a gate that swaps 0 and 1.',
+    'Drag the INVERT gate from the parts bin into the empty socket.',
   ],
   teacher: {
-    answer: 'One INV between the button and the coil. The switch is active-low, so the signal has to be flipped.',
+    answer:
+      'One INVERT gate sits between the button and the coil. Pressing the button sends 0, and INVERT turns that 0 into 1, so the coil turns on.',
     nandgame: 'Invert',
     vocab: ['active low', 'inverter'],
   },

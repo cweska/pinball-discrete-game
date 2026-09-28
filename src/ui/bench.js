@@ -235,7 +235,7 @@ export function createBench(root, options = {}) {
     const group = svg('g', { class: `wire${wire.fixed ? ' wire--fixed' : ''}`, dataset: { wire: wire.id } });
     const path = svg('path', { class: 'wire__line', d });
     const hit = svg('path', { class: 'wire__hit', d, dataset: { wire: wire.id } });
-    if (!wire.fixed) hit.append(svg('title', {}, 'Click to remove this wire'));
+    if (!wire.fixed) hit.append(svg('title', {}, 'Click to delete this wire'));
     group.append(hit, path);
     return { group, path };
   }
@@ -259,8 +259,8 @@ export function createBench(root, options = {}) {
         height: WORK_AREA.height,
         rx: 12,
       }),
-      svg('text', { class: 'bench-rail-label', x: 84, y: 26, text: 'FROM THE MACHINE' }),
-      svg('text', { class: 'bench-rail-label', x: 816, y: 26, text: 'TO THE MACHINE' })
+      svg('text', { class: 'bench-rail-label', x: 84, y: 26, text: 'INPUTS' }),
+      svg('text', { class: 'bench-rail-label', x: 816, y: 26, text: 'OUTPUTS' })
     );
 
     for (const slot of circuit.slots) layers.slots.append(slotNode(slot));
@@ -315,19 +315,19 @@ export function createBench(root, options = {}) {
     const allowance = (level.palette.find((entry) => entry.type === type) || {}).count ?? 0;
     if ((counts[type] || 0) >= allowance) {
       sound('reject');
-      say(`The bin is out of ${gateDef(type).label} gates. Remove one first.`, 'warn');
+      say(`No ${gateDef(type).label} gates left. Remove one first.`, 'warn');
       return false;
     }
     if (level.placement === 'slots') {
       const slot = slotId ? circuit.slot(slotId) : nearestSlot(position, type);
       if (!slot) {
         sound('reject');
-        say('On this one, gates have to go into a socket.', 'warn');
+        say('On this level, drop the gate into a socket.', 'warn');
         return false;
       }
       if (!slot.accepts.includes(type)) {
         sound('reject');
-        say(`That socket does not take a ${gateDef(type).label}.`, 'warn');
+        say(`That socket does not take a ${gateDef(type).label} gate.`, 'warn');
         return false;
       }
       options.beforeChange?.();
@@ -378,7 +378,7 @@ export function createBench(root, options = {}) {
     sound('cut');
     render();
     notify('unwire');
-    say('Wire removed. Ctrl+Z puts it back.', 'info');
+    say('Wire removed. Press Undo to put it back.', 'info');
   }
 
   function tryConnect(a, b) {
@@ -388,7 +388,7 @@ export function createBench(root, options = {}) {
     const sink = first.pin === OUT ? second : first;
     if (source.pin !== OUT || sink.pin === OUT) {
       sound('reject');
-      say('A wire runs from an output pin to an input pin.', 'warn');
+      say('A wire goes from an output pin to an input pin.', 'warn');
       return false;
     }
     options.beforeChange?.();
@@ -484,7 +484,7 @@ export function createBench(root, options = {}) {
       } else {
         // A click without a drag leaves the pin armed for a second click.
         pendingPin = current.from;
-        say('Now click the pin you want to connect it to.', 'info');
+        say('Now click the pin you want to connect.', 'info');
       }
       refreshDecorations();
     }
@@ -546,7 +546,7 @@ export function createBench(root, options = {}) {
     }
     if (pendingPin) {
       pendingPin = null;
-      say('Wire cancelled.', 'info');
+      say('Wire canceled.', 'info');
     }
     selected = null;
     refreshDecorations();

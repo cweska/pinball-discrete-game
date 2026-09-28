@@ -1,16 +1,15 @@
 # GATECRASHER
 
-A discrete-logic game for middle school. Students are handed an almost-finished
-electro-mechanical pinball machine with thirteen dead features, and each one
-comes alive when they build the logic behind it out of NAND, INVERT, AND, OR and
-XOR gates.
+A discrete-logic game for middle school. Students get an almost-finished pinball
+machine. Thirteen features do not work yet. Each one starts working when the
+student builds its circuit from NAND, INVERT, AND, OR, and XOR gates.
 
-The machine is the feedback. A wrong circuit does not print an error - the
-flipper stays limp, the pop bumper fires when nobody is playing, or the lock lamp
-forgets the ball was ever there.
+The machine shows whether the circuit is right. If it is wrong, the flipper does
+not move, the pop bumper fires when nobody is playing, or the lock lamp turns
+off too soon.
 
 - No build step, no dependencies, no accounts.
-- Table sounds are short WAV clips. Bench clicks stay synthesised.
+- Table sounds are short WAV clips. Bench clicks stay synthesized.
 - Progress lives in the browser and the whole thing works offline.
 
 ## Run it
@@ -43,10 +42,10 @@ difficulty, so the ramp is never two steps at once.
 
 | Act | Levels | What is new |
 | --- | --- | --- |
-| 1. Wake It Up | Flipper Live, Pop Bumper, Slingshot | One gate, one socket, wiring already drawn |
-| 2. Rules Take Shape | Tilt Guard, Drop Target Bank, Mystery Award | Several gates, then the student wires it, then free placement |
-| 3. Make Do | Parts Shortage, Bonus Multiplier, Kickback | AND and INVERT built from NANDs; several outputs at once |
-| 4. The Machine Remembers | Lock 1, Ball Saver, Lane Change, MULTIBALL | Feedback, cross-coupled NAND latches, stored state |
+| 1. First Gates | Flipper Live, Pop Bumper, Slingshot | One gate, one socket, wiring already drawn |
+| 2. Gates Together | Tilt Guard, Drop Target Bank, Mystery Award | Several gates, then the student connects the wires, then free placement |
+| 3. NAND Only | Parts Shortage, Bonus Multiplier, Kickback | AND and INVERT built from NAND gates; several outputs at once |
+| 4. Memory Circuits | Lock 1, Ball Saver, Lane Change, Multiball | Feedback, memory circuits, stored state |
 
 Then Free Play: a ball runs the playfield on its own and every circuit the
 student built drives it at once.
