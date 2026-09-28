@@ -517,14 +517,43 @@ export function createMachine(root) {
     });
   }
 
-  const ball = svg('circle', { class: 'pf-ball', cx: 200, cy: 640, r: 9 });
-  function showBall(visible) {
-    if (visible && !ball.isConnected) ballLayer.append(ball);
-    else if (!visible && ball.isConnected) ball.remove();
+  const balls = [];
+
+  function ballNode() {
+    return svg('circle', { class: 'pf-ball', r: 9 });
   }
+
+  /** Show one circle per point and hide any extras. An empty list clears the table. */
+  function showBalls(points) {
+    while (balls.length < points.length) balls.push(ballNode());
+    for (let i = 0; i < balls.length; i++) {
+      const point = points[i];
+      const node = balls[i];
+      if (!point) {
+        if (node.isConnected) node.remove();
+        continue;
+      }
+      if (!node.isConnected) ballLayer.append(node);
+      node.setAttribute('cx', point.x);
+      node.setAttribute('cy', point.y);
+    }
+  }
+
+  function showBall(visible) {
+    if (!visible) {
+      showBalls([]);
+      return;
+    }
+    if (!balls[0]) balls.push(ballNode());
+    if (!balls[0].hasAttribute('cx')) {
+      balls[0].setAttribute('cx', 200);
+      balls[0].setAttribute('cy', 640);
+    }
+    if (!balls[0].isConnected) ballLayer.append(balls[0]);
+  }
+
   function moveBall(x, y) {
-    ball.setAttribute('cx', x);
-    ball.setAttribute('cy', y);
+    showBalls([{ x, y }]);
   }
 
   return {
@@ -538,6 +567,7 @@ export function createMachine(root) {
     setScore,
     addScore,
     showBall,
+    showBalls,
     moveBall,
     get score() {
       return score;
