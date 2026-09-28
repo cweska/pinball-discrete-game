@@ -716,6 +716,9 @@
 }
 
 .signal-test__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   min-height: 28px;
   padding: 4px 10px;
   border-radius: 7px;
@@ -725,7 +728,14 @@
   font-size: 12px;
   font-weight: 650;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
+}
+
+.signal-test__cycle {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
 }
 
 .signal-test__btn:hover {
