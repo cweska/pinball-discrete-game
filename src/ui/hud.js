@@ -5,6 +5,7 @@
 
 import { clear, h, setClass, svg } from '../util/dom.js';
 import { goalTable } from '../engine/validator.js';
+import { gloss } from './glossary.js';
 import { TIER_LABELS } from './hints.js';
 import { ACTS, LEVELS } from '../levels/index.js';
 
@@ -40,7 +41,7 @@ function sequenceList(level) {
         h(
           'li',
           {},
-          h('span', { class: 'goal-steps__note', text: step.note }),
+          h('span', { class: 'goal-steps__note' }, gloss(step.note)),
           h('span', {
             class: 'goal-steps__want',
             text: Object.entries(step.expect)
@@ -124,10 +125,10 @@ export function createHud(refs) {
     });
 
     refs.briefing.append(
-      h('h2', { class: 'briefing__title', text: level.title }),
-      h('p', { class: 'briefing__story', text: level.brief.story }),
-      h('p', { class: 'briefing__goal' }, h('strong', { text: 'Your job: ' }), level.brief.goal),
-      level.brief.note ? h('p', { class: 'briefing__note', text: level.brief.note }) : null,
+      h('h2', { class: 'briefing__title' }, gloss(level.title)),
+      h('p', { class: 'briefing__story' }, gloss(level.brief.story)),
+      h('p', { class: 'briefing__goal' }, h('strong', { text: 'Your job: ' }), gloss(level.brief.goal)),
+      level.brief.note ? h('p', { class: 'briefing__note' }, gloss(level.brief.note)) : null,
       toggle,
       tableWrap
     );
@@ -175,7 +176,7 @@ export function createHud(refs) {
           h('span', { class: 'hint__tier', text: TIER_LABELS[tier] || 'Hint' }),
           h('span', { class: 'hint__count', text: `${tier} of ${total}` })
         ),
-        h('p', { class: 'hint__text', text })
+        h('p', { class: 'hint__text' }, gloss(text))
       );
     },
 

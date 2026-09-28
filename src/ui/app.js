@@ -12,7 +12,8 @@ import * as audio from '../machine/audio.js';
 import { createFreePlay } from '../machine/freeplay.js';
 import { createMachine } from '../machine/playfield.js';
 import * as progress from '../state/progress.js';
-import { clear, h, prefersReducedMotion, setClass } from '../util/dom.js';
+import { clear, h, prefersReducedMotion, qs, setClass } from '../util/dom.js';
+import { gloss } from './glossary.js';
 import { createBench } from './bench.js';
 import { createHints, hintTargets } from './hints.js';
 import { createHud } from './hud.js';
@@ -23,9 +24,18 @@ import { createTestControls } from './controls.js';
 
 const FREE_PLAY_MINIMUM = 3;
 
+function glossStatic(selector) {
+  const node = qs(selector);
+  if (!node) return;
+  const text = node.textContent.replace(/\s+/g, ' ').trim();
+  clear(node);
+  node.append(...gloss(text));
+}
+
 export function createApp(refs) {
   const reducedMotion = prefersReducedMotion();
   setClass(document.body, 'reduced-motion', reducedMotion);
+  glossStatic('.freeplay__body');
 
   const machine = createMachine(refs.machine);
   const hud = createHud(refs);
@@ -253,7 +263,7 @@ export function createApp(refs) {
     if (!refs.freeplayLog) return;
     clear(refs.freeplayLog);
     for (const [index, entry] of freePlayLog.entries()) {
-      refs.freeplayLog.append(h('li', { class: index === 0 ? 'is-latest' : '', text: prettyEvent(entry) }));
+      refs.freeplayLog.append(h('li', { class: index === 0 ? 'is-latest' : '' }, gloss(prettyEvent(entry))));
     }
   }
 
@@ -293,7 +303,7 @@ export function createApp(refs) {
     clear(refs.freeplayList);
     for (const solvedLevel of LEVELS.filter((l) => progress.isSolved(l.id))) {
       refs.freeplayList.append(
-        h('li', {}, h('strong', { text: solvedLevel.title }), ` — ${boundParts(solvedLevel).length} ${boundParts(solvedLevel).length === 1 ? 'part' : 'parts'}`)
+        h('li', {}, h('strong', {}, gloss(solvedLevel.title)), ` — ${boundParts(solvedLevel).length} ${boundParts(solvedLevel).length === 1 ? 'part' : 'parts'}`)
       );
     }
     clear(refs.freeplayCount);
