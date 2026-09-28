@@ -42,18 +42,18 @@ test('signal testing steps backwards and forwards through every combination', ()
 test('repeat walks one combination per interval and pauses without skipping', () => {
   const level = { io: { inputs: [{ id: 'btn' }] } };
   const pulse = createPulse(level, { repeat: true });
-  pulse.tick(1000);
+  assert.equal(pulse.tick(1000), false);
   assert.equal(pulse.index, 0);
-  pulse.tick(1000 + SIGNAL_STEP_MS - 1);
+  assert.equal(pulse.tick(1000 + SIGNAL_STEP_MS - 1), false);
   assert.equal(pulse.index, 0);
-  pulse.tick(1000 + SIGNAL_STEP_MS);
+  assert.equal(pulse.tick(1000 + SIGNAL_STEP_MS), true);
   assert.equal(pulse.index, 1);
-  pulse.tick(1000 + SIGNAL_STEP_MS * 2);
+  assert.equal(pulse.tick(1000 + SIGNAL_STEP_MS * 2), true);
   assert.equal(pulse.index, 0);
 
   const parked = 5000;
   pulse.tick(parked);
-  pulse.tick(parked + 20_000, { paused: true });
+  assert.equal(pulse.tick(parked + 20_000, { paused: true }), false);
   assert.equal(pulse.index, 0, 'a held test control does not advance the cycle');
   pulse.tick(parked + 20_000 + SIGNAL_STEP_MS - 1);
   assert.equal(pulse.index, 0, 'releasing the controls starts a fresh dwell');
@@ -61,7 +61,7 @@ test('repeat walks one combination per interval and pauses without skipping', ()
   assert.equal(pulse.index, 1);
 
   pulse.setRepeat(false);
-  pulse.tick(parked + 20_000 + SIGNAL_STEP_MS * 4);
+  assert.equal(pulse.tick(parked + 20_000 + SIGNAL_STEP_MS * 4), false);
   assert.equal(pulse.index, 1, 'repeat off holds the current combination');
 });
 
