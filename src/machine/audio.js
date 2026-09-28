@@ -2,27 +2,226 @@
  * Table parts play samples taken from the Visual Pinball example table
  * (see assets/sounds/SOURCES.txt). Bench cues stay synthesized: placing a
  * gate, drawing a wire, and the short tones for a solved level.
+ *
+ * The context is created on the first gesture. Safari stays suspended until
+ * resume() settles, so sounds from that gesture wait in a short queue instead
+ * of being dropped. A clip Safari cannot decode is loaded as 16-bit PCM.
  */
+
+const GESTURE_QUEUE_MS = 500;
+const QUEUE_CAP = 12;
+const DECODE_TIMEOUT_MS = 1500;
+const GESTURE_EVENTS = ['pointerdown', 'mousedown', 'keydown', 'touchend', 'click'];
 
 let ctx = null;
 let master = null;
 let muted = false;
 let noiseBuffer = null;
 let spinTimer = null;
+let contextAllowed = false;
+let gestureAt = -Infinity;
+let gesturesBound = false;
+const queue = [];
+
+function nowMs() {
+  return typeof performance !== 'undefined' ? performance.now() : Date.now();
+}
+
+function asArrayBuffer(bytes) {
+  if (bytes instanceof ArrayBuffer) return bytes;
+  return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+}
+
+function fourcc(view, offset) {
+  return String.fromCharCode(
+    view.getUint8(offset),
+    view.getUint8(offset + 1),
+    view.getUint8(offset + 2),
+    view.getUint8(offset + 3)
+  );
+}
+
+/**
+ * Read a 16-bit PCM WAV. Returns one Float32Array per channel, interleaved
+ * frames already split apart. Throws if the file is not that format.
+ */
+export function parsePcmWav(bytes) {
+  const buffer = asArrayBuffer(bytes);
+  const view = new DataView(buffer);
+  if (view.byteLength < 12 || fourcc(view, 0) !== 'RIFF' || fourcc(view, 8) !== 'WAVE') {
+    throw new Error('Not a WAV file');
+  }
+
+  let format = null;
+  let dataOffset = -1;
+  let dataSize = 0;
+  let offset = 12;
+  while (offset + 8 <= view.byteLength) {
+    const id = fourcc(view, offset);
+    const size = view.getUint32(offset + 4, true);
+    const start = offset + 8;
+    if (size < 0 || start + size > view.byteLength) break;
+    if (id === 'fmt ') {
+      if (size < 16) throw new Error('WAV fmt chunk is too short');
+      format = {
+        audioFormat: view.getUint16(start, true),
+        channels: view.getUint16(start + 2, true),
+        sampleRate: view.getUint32(start + 4, true),
+        bitsPerSample: view.getUint16(start + 14, true),
+      };
+    } else if (id === 'data') {
+      dataOffset = start;
+      dataSize = size;
+    }
+    const next = start + size + (size % 2);
+    if (next <= offset) break;
+    offset = next;
+  }
+
+  if (!format || format.audioFormat !== 1 || format.bitsPerSample !== 16) {
+    throw new Error('WAV is not 16-bit PCM');
+  }
+  if (format.channels < 1 || format.sampleRate < 1 || dataOffset < 0) {
+    throw new Error('WAV is missing PCM data');
+  }
+
+  const channels = format.channels;
+  const frames = Math.floor(dataSize / (channels * 2));
+  const samples = Array.from({ length: channels }, () => new Float32Array(frames));
+  for (let frame = 0; frame < frames; frame++) {
+    for (let channel = 0; channel < channels; channel++) {
+      const sample = view.getInt16(dataOffset + (frame * channels + channel) * 2, true);
+      samples[channel][frame] = sample / 32768;
+    }
+  }
+  return { sampleRate: format.sampleRate, channels, frames, samples };
+}
 
 function context() {
   if (ctx) return ctx;
+  if (!contextAllowed || typeof window === 'undefined') return null;
   const Ctor = window.AudioContext || window.webkitAudioContext;
   if (!Ctor) return null;
   ctx = new Ctor();
   master = ctx.createGain();
   master.gain.value = 0.42;
   master.connect(ctx.destination);
+  ctx.addEventListener('statechange', () => {
+    if (ctx.state === 'running') {
+      flushQueue();
+      unbindUnlockGestures();
+    } else {
+      bindUnlockGestures();
+    }
+  });
   return ctx;
+}
+
+/** One silent sample started inside the gesture, which is what Safari requires. */
+function prime(ac) {
+  try {
+    const buffer = ac.createBuffer(1, 1, ac.sampleRate);
+    const source = ac.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ac.destination);
+    source.start();
+  } catch {
+    // resume() still runs when the buffer itself is refused.
+  }
+}
+
+function enqueue(name) {
+  if (nowMs() - gestureAt > GESTURE_QUEUE_MS) return;
+  queue.push(name);
+  if (queue.length > QUEUE_CAP) queue.shift();
+}
+
+function flushQueue() {
+  if (!ready()) return;
+  const pending = queue.splice(0, queue.length);
+  for (const name of pending) playNow(name);
+}
+
+function onGesture() {
+  unlockAudio();
+}
+
+export function bindUnlockGestures() {
+  if (gesturesBound || typeof window === 'undefined') return;
+  gesturesBound = true;
+  for (const type of GESTURE_EVENTS) window.addEventListener(type, onGesture, true);
+}
+
+function unbindUnlockGestures() {
+  if (!gesturesBound || typeof window === 'undefined') return;
+  gesturesBound = false;
+  for (const type of GESTURE_EVENTS) window.removeEventListener(type, onGesture, true);
+}
+
+/** Browsers hold audio until a real gesture; call this from a click handler. */
+export function unlockAudio() {
+  contextAllowed = true;
+  gestureAt = nowMs();
+  const ac = context();
+  if (!ac) return;
+  if (ac.state !== 'running') {
+    prime(ac);
+    const pending = ac.resume();
+    if (pending && typeof pending.then === 'function') {
+      pending.then(() => {
+        if (ac.state === 'running') {
+          flushQueue();
+          unbindUnlockGestures();
+        }
+      }).catch(() => {});
+    }
+  } else {
+    flushQueue();
+    unbindUnlockGestures();
+  }
+  ensureSamples();
+}
+
+export function setMuted(value) {
+  muted = !!value;
+  if (muted) {
+    queue.length = 0;
+    stopSpin();
+  }
+}
+
+export function isMuted() {
+  return muted;
+}
+
+function ready() {
+  if (muted || !ctx || ctx.state !== 'running') return null;
+  return ctx;
+}
+
+/** Safari throws if an exponential ramp starts from an implicit 0. */
+function rampDown(param, gain, decay, now) {
+  const start = Math.max(gain, 0.0001);
+  const end = now + Math.max(decay, 0.01);
+  try {
+    param.setValueAtTime(start, now);
+    param.exponentialRampToValueAtTime(0.0001, end);
+    return;
+  } catch {
+    // Fall through to a linear ramp.
+  }
+  try {
+    param.cancelScheduledValues(now);
+    param.setValueAtTime(start, now);
+    param.linearRampToValueAtTime(0.0001, end);
+  } catch {
+    param.value = start;
+  }
 }
 
 function noise() {
   const ac = context();
+  if (!ac) return null;
   if (!noiseBuffer) {
     noiseBuffer = ac.createBuffer(1, ac.sampleRate * 0.6, ac.sampleRate);
     const data = noiseBuffer.getChannelData(0);
@@ -33,36 +232,12 @@ function noise() {
   return source;
 }
 
-/** Browsers hold audio until a real gesture; call this from a click handler. */
-export function unlockAudio() {
-  const ac = context();
-  if (ac && ac.state === 'suspended') ac.resume();
-  ensureSamples();
-}
-
-export function setMuted(value) {
-  muted = !!value;
-  if (muted) stopSpin();
-}
-
-export function isMuted() {
-  return muted;
-}
-
-function ready() {
-  if (muted) return null;
-  const ac = context();
-  if (!ac || ac.state === 'suspended') return null;
-  return ac;
-}
-
 function struck(frequency, { decay = 0.9, gain = 0.5, partials = [1, 2.76, 5.4], type = 'sine' } = {}) {
   const ac = ready();
   if (!ac) return;
   const now = ac.currentTime;
   const bus = ac.createGain();
-  bus.gain.setValueAtTime(gain, now);
-  bus.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+  rampDown(bus.gain, gain, decay, now);
   bus.connect(master);
   partials.forEach((ratio, index) => {
     const osc = ac.createOscillator();
@@ -81,13 +256,13 @@ function snap({ frequency = 1500, q = 6, decay = 0.07, gain = 0.5 } = {}) {
   if (!ac) return;
   const now = ac.currentTime;
   const source = noise();
+  if (!source) return;
   const filter = ac.createBiquadFilter();
   filter.type = 'bandpass';
   filter.frequency.value = frequency;
   filter.Q.value = q;
   const envelope = ac.createGain();
-  envelope.gain.setValueAtTime(gain, now);
-  envelope.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+  rampDown(envelope.gain, gain, decay, now);
   source.connect(filter).connect(envelope).connect(master);
   source.start(now);
   source.stop(now + decay + 0.02);
@@ -101,8 +276,7 @@ function blip(frequency, { decay = 0.1, gain = 0.22, type = 'square' } = {}) {
   osc.type = type;
   osc.frequency.value = frequency;
   const envelope = ac.createGain();
-  envelope.gain.setValueAtTime(gain, now);
-  envelope.gain.exponentialRampToValueAtTime(0.0001, now + decay);
+  rampDown(envelope.gain, gain, decay, now);
   osc.connect(envelope).connect(master);
   osc.start(now);
   osc.stop(now + decay + 0.02);
@@ -146,28 +320,61 @@ const SAMPLES = [
 
 const BUMPERS = ['fx_bumper1', 'fx_bumper2', 'fx_bumper3', 'fx_bumper4'];
 const buffers = new Map();
-let loading = null;
+const loads = new Map();
 let bumperAt = 0;
 
 function sampleUrl(name) {
   return new URL(`../../assets/sounds/${name}.wav`, import.meta.url);
 }
 
-function ensureSamples() {
-  const ac = context();
-  if (!ac) return Promise.resolve();
-  if (loading) return loading;
-  loading = Promise.all(
-    SAMPLES.map(async (name) => {
-      const response = await fetch(sampleUrl(name));
-      if (!response.ok) throw new Error(`Missing sound ${name}`);
-      const bytes = await response.arrayBuffer();
-      buffers.set(name, await ac.decodeAudioData(bytes));
-    })
-  ).catch(() => {
-    loading = null;
+function audioBufferFromPcm(ac, bytes) {
+  const pcm = parsePcmWav(bytes);
+  const buffer = ac.createBuffer(pcm.channels, pcm.frames, pcm.sampleRate);
+  pcm.samples.forEach((channel, index) => buffer.copyToChannel(channel, index));
+  return buffer;
+}
+
+function decodeClip(ac, bytes) {
+  const copy = bytes.slice(0);
+  const decoded = Promise.resolve()
+    .then(() => ac.decodeAudioData(copy))
+    .catch(() => null);
+  const expired = new Promise((resolve) => {
+    setTimeout(() => resolve(null), DECODE_TIMEOUT_MS);
   });
-  return loading;
+  return Promise.race([decoded, expired]).then((buffer) => buffer || audioBufferFromPcm(ac, bytes));
+}
+
+function ensureSample(name) {
+  if (buffers.has(name)) return Promise.resolve(buffers.get(name));
+  const pending = loads.get(name);
+  if (pending) return pending;
+  const job = (async () => {
+    const ac = context();
+    if (!ac) return null;
+    const response = await fetch(sampleUrl(name));
+    if (!response.ok) throw new Error(`Missing sound ${name}`);
+    const bytes = await response.arrayBuffer();
+    const buffer = await decodeClip(ac, bytes);
+    buffers.set(name, buffer);
+    return buffer;
+  })().then(
+    (buffer) => {
+      if (!buffer) loads.delete(name);
+      return buffer;
+    },
+    () => {
+      loads.delete(name);
+      return null;
+    }
+  );
+  loads.set(name, job);
+  return job;
+}
+
+function ensureSamples() {
+  if (!context()) return Promise.resolve();
+  return Promise.all(SAMPLES.map((name) => ensureSample(name)));
 }
 
 function playSample(name) {
@@ -175,30 +382,47 @@ function playSample(name) {
   if (!ac) return;
   const buffer = buffers.get(name);
   if (!buffer) {
-    ensureSamples().then(() => {
-      if (!muted && buffers.get(name)) playSample(name);
+    ensureSample(name).then((decoded) => {
+      if (decoded && !muted) playSample(name);
     });
     return;
   }
-  const source = ac.createBufferSource();
-  source.buffer = buffer;
-  source.connect(master);
-  source.start();
+  try {
+    const source = ac.createBufferSource();
+    source.buffer = buffer;
+    source.connect(master);
+    source.start();
+  } catch {
+    // A refused buffer source should not escape into the frame loop.
+  }
+}
+
+function playNow(name) {
+  try {
+    if (name === 'bumper') {
+      const clip = BUMPERS[bumperAt % BUMPERS.length];
+      bumperAt += 1;
+      playSample(clip);
+      return;
+    }
+    if (SAMPLES.includes(name)) {
+      playSample(name);
+      return;
+    }
+    const voice = VOICES[name];
+    if (voice) voice();
+  } catch {
+    // A throw from Safari's audio params must not stop the animation loop.
+  }
 }
 
 export function play(name) {
-  if (name === 'bumper') {
-    const clip = BUMPERS[bumperAt % BUMPERS.length];
-    bumperAt += 1;
-    playSample(clip);
+  if (muted) return;
+  if (!ready()) {
+    enqueue(name);
     return;
   }
-  if (SAMPLES.includes(name)) {
-    playSample(name);
-    return;
-  }
-  const voice = VOICES[name];
-  if (voice) voice();
+  playNow(name);
 }
 
 /** The spinner rattles for as long as it turns. */
@@ -216,6 +440,9 @@ export function startSpin() {
 export function stopSpin() {
   if (spinTimer) clearTimeout(spinTimer);
   spinTimer = null;
+  for (let index = queue.length - 1; index >= 0; index--) {
+    if (queue[index] === 'fx_spinner') queue.splice(index, 1);
+  }
 }
 
 export function hasVoice(name) {

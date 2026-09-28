@@ -382,13 +382,17 @@ export function createApp(refs) {
       machine.setScore(machine.score);
     } else {
       const isLive = controls.isLive(now);
-      pulse.tick(now, { paused: isLive });
+      const cycled = pulse.tick(now, { paused: isLive });
       const values = isLive ? controls.values : pulse.vector();
       if (!isLive) inputs = values;
 
       sim = settle(circuit, values, simState);
       bench.paint(sim, { phase: pulse.dotPhase(now), animate: !reducedMotion });
-      machine.applyState(machineStates({ sound: isLive }), { sound: isLive, scoring: isLive });
+      // Back and Next light the same parts as the test buttons, so those parts
+      // play too. An auto-cycle step stays quiet. Points still wait for a
+      // button the student pressed.
+      const hearParts = !cycled;
+      machine.applyState(machineStates({ sound: hearParts }), { sound: hearParts, scoring: isLive });
       publishSignal(isLive);
       hints.tick(delta);
     }
@@ -474,7 +478,7 @@ export function createApp(refs) {
     }
   });
 
-  window.addEventListener('pointerdown', () => audio.unlockAudio(), { once: true });
+  audio.bindUnlockGestures();
 
   // --- boot ----------------------------------------------------------------
 

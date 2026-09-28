@@ -46,17 +46,20 @@ export function createPulse(level, { repeat = true } = {}) {
     /**
      * Advance while Repeat is on. `paused` freezes the dwell (the student is
      * holding the test controls) so releasing them does not skip a combination.
+     * Returns true only on the frame the cycle itself moves to the next combination.
      */
     tick(now, { paused = false } = {}) {
       if (heldSince == null) heldSince = now;
       if (paused || !repeating) {
         heldSince = now;
-        return;
+        return false;
       }
       if (now - heldSince >= SIGNAL_STEP_MS) {
         index = (index + 1) % vectors.length;
         heldSince = now;
+        return true;
       }
+      return false;
     },
     /** 0..1 position of the traveling dots. */
     dotPhase(time) {
