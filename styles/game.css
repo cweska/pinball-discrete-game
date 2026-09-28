@@ -399,20 +399,19 @@
   transition: transform 60ms ease-out;
 }
 
-.part--coil.is-hit .coil__plunger {
+.part--coil.is-hit .coil__plunger,
+.part--coil.is-on .coil__plunger {
   transform: translateX(9px);
 }
 
-.part--coil.coil--up.is-hit .coil__plunger {
+.part--coil.coil--up.is-hit .coil__plunger,
+.part--coil.coil--up.is-on .coil__plunger {
   transform: translateY(-9px);
 }
 
-.part--coil.is-hit .coil__body {
-  fill: color-mix(in srgb, var(--high) 35%, #1a2235);
-  stroke: var(--high);
-}
-
+.part--coil.is-hit .coil__body,
 .part--coil.is-on .coil__body {
+  fill: color-mix(in srgb, var(--high) 35%, #1a2235);
   stroke: var(--high);
 }
 
