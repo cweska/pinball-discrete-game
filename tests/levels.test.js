@@ -122,6 +122,13 @@ for (const level of LEVELS) {
       assert.ok(inputIds.includes(inputId), `inputBind names unknown input ${inputId}`);
       assert.ok(hasPart(partId), `inputBind names unknown part ${partId}`);
     }
+    for (const [inputId, partId] of Object.entries(level.machine.targetInputs || {})) {
+      assert.ok(inputIds.includes(inputId), `targetInputs names unknown input ${inputId}`);
+      assert.ok(hasPart(partId), `targetInputs names unknown part ${partId}`);
+    }
+    for (const partId of level.machine.watch || []) {
+      assert.ok(hasPart(partId), `watch names unknown part ${partId}`);
+    }
     assert.ok(boundParts(level).length > 0, 'every level lights something up');
 
     const driven = new Set();

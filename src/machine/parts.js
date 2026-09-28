@@ -29,9 +29,10 @@ export const PARTS = {
   'lamp.mystery': { kind: 'lamp', label: 'MYSTERY', zone: 'playfield', x: 308, y: 150, size: 13, color: 'violet' },
   'toy.spinner': { kind: 'toy', label: 'GATE WHEEL', zone: 'playfield', x: 308, y: 226, r: 26, sound: 'fx_spinner' },
 
-  'target.1': { kind: 'target', label: 'N', zone: 'playfield', x: 140, y: 252 },
-  'target.2': { kind: 'target', label: 'A', zone: 'playfield', x: 176, y: 252 },
-  'target.3': { kind: 'target', label: 'D', zone: 'playfield', x: 212, y: 252 },
+  'target.1': { kind: 'target', label: 'G', zone: 'playfield', x: 122, y: 248 },
+  'target.2': { kind: 'target', label: 'A', zone: 'playfield', x: 158, y: 248 },
+  'target.3': { kind: 'target', label: 'T', zone: 'playfield', x: 194, y: 248 },
+  'target.4': { kind: 'target', label: 'E', zone: 'playfield', x: 230, y: 248 },
   'coil.gate': { kind: 'coil', label: 'DIVERTER', zone: 'playfield', x: 256, y: 300, sound: 'gate' },
   'lamp.jackpot': { kind: 'lamp', label: 'JACKPOT', zone: 'playfield', x: 176, y: 300, size: 14, color: 'gold' },
 

@@ -215,36 +215,44 @@ _Gates working together._
 
 ### 5. Drop Target Bank
 
-**What comes alive:** Open the diverter and light the jackpot only when all three targets are down.
+**What comes alive:** Open the diverter and light the jackpot only when all four targets are down.
 
-**Parts bin:** 2 x AND  
+**Parts bin:** 3 x AND  
 **Bench:** gates drop into fixed sockets, student draws the wiring
 
-**Answer:** AND(AND(N, A), D), fanned out to both outputs. First look at fan-out.
+**Answer:** AND(AND(G, A), AND(T, E)), fanned out to both outputs. Pair the targets, then AND the pairs.
 
 **Follows NANDGAME:** And (chained)  
 **Vocabulary:** fan-out, chaining gates
 
 <details><summary>Truth table the game checks</summary>
 
-| N | A | D | GATE | JACK |
-| --- | --- | --- | --- | --- |
-| 0 | 0 | 0 | 0 | 0 |
-| 0 | 0 | 1 | 0 | 0 |
-| 0 | 1 | 0 | 0 | 0 |
-| 0 | 1 | 1 | 0 | 0 |
-| 1 | 0 | 0 | 0 | 0 |
-| 1 | 0 | 1 | 0 | 0 |
-| 1 | 1 | 0 | 0 | 0 |
-| 1 | 1 | 1 | 1 | 1 |
+| G | A | T | E | GATE | JACK |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 0 | 0 | 0 | 0 | 0 |
+| 0 | 0 | 0 | 1 | 0 | 0 |
+| 0 | 0 | 1 | 0 | 0 | 0 |
+| 0 | 0 | 1 | 1 | 0 | 0 |
+| 0 | 1 | 0 | 0 | 0 | 0 |
+| 0 | 1 | 0 | 1 | 0 | 0 |
+| 0 | 1 | 1 | 0 | 0 | 0 |
+| 0 | 1 | 1 | 1 | 0 | 0 |
+| 1 | 0 | 0 | 0 | 0 | 0 |
+| 1 | 0 | 0 | 1 | 0 | 0 |
+| 1 | 0 | 1 | 0 | 0 | 0 |
+| 1 | 0 | 1 | 1 | 0 | 0 |
+| 1 | 1 | 0 | 0 | 0 | 0 |
+| 1 | 1 | 0 | 1 | 0 | 0 |
+| 1 | 1 | 1 | 0 | 0 | 0 |
+| 1 | 1 | 1 | 1 | 1 | 1 |
 
 </details>
 
 <details><summary>Hint ladder (what the game will eventually say)</summary>
 
-1. An AND gate only takes two inputs, and you have three targets. Can one AND gate answer about the first two, and the second AND gate take that answer along with the third target?
-2. The first AND already has N and A running into it. Its output is the answer to "are N and A both down?" - feed that answer into the free input pin of the second AND.
-3. Wire s1 output to the empty pin on s2, then run s2 output to BOTH the diverter coil and the jackpot lamp. One output pin can feed as many wires as you like.
+1. An AND gate only takes two inputs, and you have four targets. Two sockets already have a pair wired in. Each of those answers "are both of mine down?" What do you do with the two answers?
+2. The empty socket is the last AND. Feed it the output of the G-and-A gate and the output of the T-and-E gate. That answer is "are all four down?"
+3. Wire s1 output to one pin on s3, and s2 output to the other pin. Then run s3 output to BOTH the diverter coil and the jackpot lamp.
 
 </details>
 
@@ -535,7 +543,7 @@ _Circuits that hold a value._
 1. Level 1 needed an inverter because the switch was active low. What would
    happen to the rest of the machine if the factory changed every switch to
    close to +5V instead?
-2. Level 5 used two ANDs for three targets. How many would you need for six
+2. Level 5 used three ANDs for four targets. How many would you need for six
    targets? For twenty?
 3. Level 7 built AND and INVERT out of NANDs. Could you build XOR out of NANDs
    too? How many would it take?

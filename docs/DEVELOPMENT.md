@@ -64,7 +64,8 @@ that are easy to get wrong:
   steps, and is the only way to test something that has to hold a value.
 - `machine.bind` maps an output id to one part id or an array of them.
   `machine.inputBind` drives an indicator lamp straight from an input (the TILT
-  lamp), and `machine.targetInputs` drops the physical drop targets.
+  lamp), `machine.targetInputs` drops the physical drop targets, and
+  `machine.watch` keeps those parts lit as the level's focus.
 
 After touching any level: `npm test` (integrity checks are per-level, so you will
 see exactly which one broke) and `npm run guide` to regenerate the teacher guide.

@@ -186,7 +186,7 @@ const FOOTER = `## Discussion questions
 1. Level 1 needed an inverter because the switch was active low. What would
    happen to the rest of the machine if the factory changed every switch to
    close to +5V instead?
-2. Level 5 used two ANDs for three targets. How many would you need for six
+2. Level 5 used three ANDs for four targets. How many would you need for six
    targets? For twenty?
 3. Level 7 built AND and INVERT out of NANDs. Could you build XOR out of NANDs
    too? How many would it take?
