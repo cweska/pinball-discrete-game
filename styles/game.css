@@ -1366,6 +1366,75 @@
   overflow: visible;
 }
 
+/* --- short screens ------------------------------------------------------- */
+
+/* 11" Chromebooks are wide enough for the two columns but only about 600–768px
+   tall once the browser chrome is in. The bench is the only flexible row, so a
+   hint card (or an open truth table) was shrinking the circuit to a postage
+   stamp. Floor that row and scroll the column instead. Lay the action buttons
+   in a row so they stop stretching the parts bin, and let a long briefing
+   scroll inside itself. */
+
+@media (max-height: 820px) {
+  .build-view {
+    gap: 8px;
+    grid-template-rows: minmax(7.75rem, auto) auto minmax(290px, 1fr) minmax(min-content, auto) auto;
+  }
+
+  .build-view:not(:has(.hint:not([hidden]))) {
+    grid-template-rows: minmax(7.75rem, auto) minmax(290px, 1fr) minmax(min-content, auto) auto;
+  }
+
+  /* Keep the job and Show every case on screen. The note and the truth table
+     scroll inside the card, and the bench row below will not give up its floor. */
+  .briefing {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 7.75rem;
+    overflow: auto;
+  }
+
+  .briefing__title,
+  .briefing__story,
+  .briefing__goal,
+  .briefing__toggle {
+    flex-shrink: 0;
+  }
+
+  .briefing__toggle {
+    order: 4;
+  }
+
+  .briefing__note,
+  .briefing__table {
+    order: 5;
+    flex-shrink: 0;
+  }
+
+  /* A clipped first line of the note reads as stray text under the button.
+     Start the note on the next scroll instead. */
+  .briefing__note {
+    margin-top: 1.4rem;
+  }
+
+  .bench-bar {
+    align-items: center;
+  }
+
+  .bench-bar .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  /* Blurbs wrap the parts bin onto extra rows and shove the buttons off a
+     short window. The gate name still says what it is. */
+  .chip__blurb {
+    display: none;
+  }
+}
+
 /* --- narrow screens ------------------------------------------------------ */
 
 @media (max-width: 1100px) {
